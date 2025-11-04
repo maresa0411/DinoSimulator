@@ -8,7 +8,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -267,7 +266,7 @@ public class DinoSimulatorStage extends Stage {
         messageLabel = new Label("Willkommen!");
 
         //synchronizing buttons and menu items
-        dinoSimulatorPane.getSelectedActionProperty().addListener(((observableValue, oldValue, newValue) ->
+        dinoSimulatorPane.getSelectedActionProperty().addListener(((_, _, newValue) ->
         {
             placeDinoCheckMenuItem.setSelected(newValue == Selection.PLACE_DINO);
             placeBoneCheckMenuItem.setSelected(newValue == Selection.PLACE_BONE);
@@ -367,9 +366,7 @@ public class DinoSimulatorStage extends Stage {
         okButton.disableProperty().bind(invalidInput);
         Optional<String> result = dialog.showAndWait();
 
-        if(result.isPresent()){
-            territory.getDino().setAmountOfBones(Integer.parseInt(result.get()));
-        }
+        result.ifPresent(s -> territory.getDino().setAmountOfBones(Integer.parseInt(s)));
     }
 
     private boolean isValidBoneInput(String input){

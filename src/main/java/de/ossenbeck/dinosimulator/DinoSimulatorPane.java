@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 
 public class DinoSimulatorPane extends StackPane {
     private Territory territory;
-    private static final int BORDER_SIZE = 20;
+    private static final int BORDER_SIZE = 50;
     private static final int SIZE = 50;
     private static final int BONE_SIZE = SIZE/3;
     private static final Color TERRITORY_COLOR = Color.rgb(5, 87, 34);
@@ -27,8 +27,6 @@ public class DinoSimulatorPane extends StackPane {
     private ObjectProperty<Selection> selectedAction = new SimpleObjectProperty<>(Selection.NONE);
     private Canvas canvas;
     private boolean draggingDino = false;
-    private int dinoOriginalRow;
-    private int dinoOriginalCol;
 
     static{
         dinoImageEast = new Image("Trex.png");
@@ -74,7 +72,7 @@ public class DinoSimulatorPane extends StackPane {
                 } else if (territory.getBones(r, c) > 0) {
                     int bones = territory.getBones(r,c);
                     for(int i=0; i< bones; i++){
-                        gc.drawImage(boneImage, BORDER_SIZE+c*SIZE + i%3 * BONE_SIZE, BORDER_SIZE+r*SIZE + (double) i /3 * BONE_SIZE, BONE_SIZE, BONE_SIZE);
+                        gc.drawImage(boneImage, BORDER_SIZE+c*SIZE + i%3 * BONE_SIZE, BORDER_SIZE+r*SIZE + i/3 * BONE_SIZE, BONE_SIZE, BONE_SIZE);
                     }
                 }
             }
@@ -115,8 +113,6 @@ public class DinoSimulatorPane extends StackPane {
 
         if(territory.getDino().getRow()==row && territory.getDino().getCol() == col){
             draggingDino = true;
-            dinoOriginalRow = row;
-            dinoOriginalCol = col;
         }
         switch (selectedAction.get()){
             case PLACE_DINO -> territory.placeDino(row, col);
