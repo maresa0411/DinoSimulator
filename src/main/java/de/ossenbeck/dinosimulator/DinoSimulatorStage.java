@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -18,6 +20,7 @@ public class DinoSimulatorStage extends Stage {
     private Territory territory;
     private DinoSimulatorPane dinoSimulatorPane;
     private Label messageLabel;
+    private static final int GAP = 10;
 
     public DinoSimulatorStage(Territory territory){
         this.territory = territory;
@@ -303,14 +306,24 @@ public class DinoSimulatorStage extends Stage {
 
         ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
-        TextField rows = new TextField();
-        rows.setPromptText("Anzahl an Reihen (1-99):");
-        TextField cols = new TextField();
-        cols.setPromptText("Anzahl an Spalten (1-99):");
 
-        VBox vBox = new VBox();
-        vBox.getChildren().addAll(rows, cols);
-        dialog.getDialogPane().setContent(vBox);
+        Label rowLabel = new Label("Anzahl der Reihen: ");
+        TextField rows = new TextField();
+        rows.setPromptText("1-100");
+
+        Label colLabel = new Label("Anzahl der Spalten: ");
+        TextField cols = new TextField();
+        cols.setPromptText("1-100");
+
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(GAP);
+        gridPane.setVgap(GAP);
+        gridPane.add(rowLabel, 0, 0);
+        gridPane.add(rows, 1, 0);
+        gridPane.add(colLabel, 0, 1);
+        gridPane.add(cols, 1, 1);
+
+        dialog.getDialogPane().setContent(gridPane);
 
         Button okButton = (Button) dialog.getDialogPane().lookupButton(okButtonType);
         BooleanBinding invalidInput = Bindings.createBooleanBinding(()-> (!isValidRowColInput(rows.getText()) || !isValidRowColInput(cols.getText())), rows.textProperty(), cols.textProperty());
@@ -337,7 +350,7 @@ public class DinoSimulatorStage extends Stage {
     private boolean isValidRowColInput(String input){
         try{
             int value = Integer.parseInt(input);
-            return value > 0 && value < 100;
+            return value > 0 && value <= 100;
         } catch (NumberFormatException e) {
             return false;
         }
@@ -346,7 +359,7 @@ public class DinoSimulatorStage extends Stage {
     private void changeAmountOfBonesDialog(){
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Knochenmenge anpassen");
-        dialog.setHeaderText("Gib die gewünschte Menge an Knochen ein (0-99):");
+        dialog.setHeaderText("0-100");
 
         // mit ChatGPT
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
@@ -362,7 +375,7 @@ public class DinoSimulatorStage extends Stage {
     private boolean isValidBoneInput(String input){
         try{
             int value = Integer.parseInt(input);
-            return value >= 0 && value <= 99;
+            return value >= 0 && value <= 100;
         }catch(NumberFormatException e){
             return false;
         }

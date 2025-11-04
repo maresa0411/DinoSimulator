@@ -5,7 +5,7 @@ import java.util.Random;
 public class Territory {
     private int[][] territory;
     private Dino dino;
-    private final static int DEFAULT_SIZE = 15;
+    private final static int DEFAULT_SIZE = 10;
     private final static int ROCK = -1;
     private final static int EMPTY = 0;
     private final static int MAX_BONES = 9;
@@ -57,6 +57,12 @@ public class Territory {
                     newTerritory[i][j] = 0;
                 }
             }
+        }
+        if(dino.getRow() >= newRows || dino.getCol() >= newCols){
+            if(newTerritory[0][0] == ROCK){
+                newTerritory[0][0] = EMPTY;
+            }
+            dino.setPosition(0,0);
         }
         territory = newTerritory;
     }
