@@ -5,7 +5,7 @@ import java.util.Random;
 public class Territory {
     private int[][] territory;
     private Dino dino;
-    private final static int DEFAULT_SIZE = 10;
+    private final static int DEFAULT_SIZE = 15;
     private final static int ROCK = -1;
     private final static int EMPTY = 0;
     private final static int MAX_BONES = 9;

@@ -139,4 +139,8 @@ public class Dino {
     public int getAmountOfBones(){
         return amountOfBones;
     }
+
+    public void setAmountOfBones(int amountOfBones){
+        this.amountOfBones = amountOfBones;
+    }
 }

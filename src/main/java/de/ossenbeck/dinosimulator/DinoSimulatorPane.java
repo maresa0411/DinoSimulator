@@ -1,8 +1,11 @@
 package de.ossenbeck.dinosimulator;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
@@ -21,6 +24,10 @@ public class DinoSimulatorPane extends StackPane {
     private static final Image rockImage;
     private static final Image boneImage;
 
+    private ObjectProperty<Selection> selectedAction = new SimpleObjectProperty<>(Selection.NONE);
+    private Canvas canvas;
+
+
     static{
         dinoImageEast = new Image("Trex.png");
         dinoImageSouth = new Image("Trex_south.png");
@@ -32,8 +39,9 @@ public class DinoSimulatorPane extends StackPane {
 
     public DinoSimulatorPane(Territory territory){
         this.territory = territory;
-        Canvas canvas = new Canvas(calcWidth(), calcHeight());
-        printBoard(canvas);
+        canvas = new Canvas(calcWidth(), calcHeight());
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, this::canvasPressed);
+        printBoard();
         this.getChildren().add(canvas);
     }
 
@@ -45,8 +53,10 @@ public class DinoSimulatorPane extends StackPane {
         return (2*BORDER_SIZE + territory.getNumberOfRows() * SIZE);
     }
 
-    private void printBoard(Canvas canvas){
+    public void printBoard(){
+        canvas = new Canvas(calcWidth(), calcHeight());
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         gc.setFill(TERRITORY_COLOR);
 
         for(int r=0; r<territory.getNumberOfRows(); r++){
@@ -77,5 +87,37 @@ public class DinoSimulatorPane extends StackPane {
         for(int cols = 0; cols <= territory.getNumberOfCols(); cols++){
             gc.strokeLine(BORDER_SIZE + cols*SIZE, BORDER_SIZE, BORDER_SIZE+cols*SIZE, BORDER_SIZE+territory.getNumberOfRows()*SIZE);
         }
+
+    }
+
+    public void setSelectedAction(Selection selectedAction){
+        this.selectedAction.setValue(selectedAction);
+    }
+
+    public Selection getSelectedAction(){
+        return selectedAction.get();
+    }
+
+    public ObjectProperty<Selection> getSelectedActionProperty(){
+        return selectedAction;
+    }
+
+    private void canvasPressed(MouseEvent event){
+        double x = event.getX();
+        double y = event.getY();
+
+        if(x<BORDER_SIZE || y < BORDER_SIZE || x > BORDER_SIZE + territory.getNumberOfCols()*SIZE || y > BORDER_SIZE + territory.getNumberOfRows()*SIZE){
+            return;
+        }
+        int row = (int) (y-BORDER_SIZE)/SIZE;
+        int col = (int) (x-BORDER_SIZE)/SIZE;
+
+        switch (selectedAction.get()){
+            case PLACE_DINO -> territory.placeDino(row, col);
+            case PLACE_BONE -> territory.placeBone(row, col);
+            case PLACE_ROCK -> territory.placeRock(row, col);
+            case DELETE -> territory.removeItem(row, col);
+        }
+        printBoard();
     }
 }
