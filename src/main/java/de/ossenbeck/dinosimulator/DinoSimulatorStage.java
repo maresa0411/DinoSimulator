@@ -1,5 +1,6 @@
 package de.ossenbeck.dinosimulator;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Orientation;
@@ -58,6 +59,7 @@ public class DinoSimulatorStage extends Stage {
         SeparatorMenuItem separatorMenuItem2 = new SeparatorMenuItem();
 
         MenuItem stopMenuItem = new MenuItem("_Beenden");
+        stopMenuItem.setOnAction(_ -> Platform.exit());
         stopMenuItem.setAccelerator(KeyCombination.keyCombination("SHORTCUT+Q"));
 
         editorMenu.getItems().addAll(newMenuItem, openMenuItem, separatorMenuItem1,compileMenuItem, printEditorMenuItem, separatorMenuItem2,stopMenuItem);
