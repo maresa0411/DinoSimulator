@@ -20,6 +20,13 @@ public class DinoSimulatorStage extends Stage {
     private DinoSimulatorPane dinoSimulatorPane;
     private Label messageLabel;
     private static final int GAP = 10;
+    private static final ImageView dinoWithBones;
+
+    static{
+        dinoWithBones = new ImageView("TrexWithBone.png");
+        dinoWithBones.setFitWidth(50);
+        dinoWithBones.setFitHeight(50);
+    }
 
     public DinoSimulatorStage(Territory territory){
         this.territory = territory;
@@ -358,7 +365,9 @@ public class DinoSimulatorStage extends Stage {
     private void changeAmountOfBonesDialog(){
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Knochenmenge anpassen");
-        dialog.setHeaderText("0-100");
+        dialog.setHeaderText("Gib die gewünschte Anzahl an Knochen ein (0-100)");
+        dialog.setGraphic(dinoWithBones);
+        dialog.getEditor().setPromptText("0-100");
 
         // mit ChatGPT
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
