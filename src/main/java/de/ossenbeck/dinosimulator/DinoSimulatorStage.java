@@ -323,13 +323,15 @@ public class DinoSimulatorStage extends Stage {
         ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        Label rowLabel = new Label("Anzahl der Reihen: ");
+        Label rowLabel = new Label("Anzahl der Reihen (1-" + MAX_ROWS_COLS + "):");
         TextField rows = new TextField();
         rows.setPromptText("1-"+MAX_ROWS_COLS);
+        rows.setText(String.valueOf(territory.getNumberOfRows()));
 
-        Label colLabel = new Label("Anzahl der Spalten: ");
+        Label colLabel = new Label("Anzahl der Spalten (1-" + MAX_ROWS_COLS + "):");
         TextField cols = new TextField();
         cols.setPromptText("1-"+MAX_ROWS_COLS);
+        cols.setText(String.valueOf(territory.getNumberOfCols()));
 
         GridPane gridPane = new GridPane();
         gridPane.setHgap(GAP);
@@ -375,9 +377,10 @@ public class DinoSimulatorStage extends Stage {
     private void changeAmountOfBonesDialog(){
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Knochenmenge anpassen");
-        dialog.setHeaderText("Gib die gewünschte Anzahl an Knochen ein (0-100)");
+        dialog.setHeaderText("Gib die gewünschte Anzahl an Knochen ein (0-" + Dino.getMaxBones() + ")");
         dialog.setGraphic(dinoWithBones);
         dialog.getEditor().setPromptText("0-"+ Dino.getMaxBones());
+        dialog.getEditor().setText(String.valueOf(territory.getDino().getAmountOfBones()));
 
         // mit ChatGPT
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);

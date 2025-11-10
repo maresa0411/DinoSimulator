@@ -176,4 +176,8 @@ public class Dino {
     public static int getMaxBones() {
         return MAX_BONES;
     }
+
+    public int getAmountOfBones(){
+        return amountOfBones;
+    }
 }
