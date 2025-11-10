@@ -30,7 +30,7 @@ public class ConsoleTest {
 
         while(gameOn) {
             System.out.println("Aktion ausführen:" +
-                    "\nv (nach vorn), l (links um), a (Knochen aufheben), b (Knochen ablegen), e (Knochen essen)" +
+                    "\nv (nach vorn), l (links um), a (Knochen aufheben), b (Knochen ablegen)" +
                     "\np (Dino platzieren), k (Knochen platzieren), f (Felsen platzieren), d (löschen) \nq (beenden)" +
                     "\ng (Größe ändern)");
 
@@ -59,7 +59,6 @@ public class ConsoleTest {
                     case "l" -> territory.getDino().turnLeft();
                     case "a" -> territory.getDino().pickUpBone();
                     case "b" -> territory.getDino().putDownBone();
-                    case "e" -> territory.getDino().eatBone();
                     case "q" -> gameOn = false;
                     default -> System.out.println("Ungueltige Eingabe");
                 }

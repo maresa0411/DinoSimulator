@@ -6,6 +6,7 @@ public class Dino {
     private int amountOfBones;
     private Orientation orientation;
     private Territory territory;
+    private final static int MAX_BONES = 100;
 
     /**
      * @param territory Territory
@@ -21,6 +22,11 @@ public class Dino {
         orientation = Orientation.EAST;
     }
 
+    /**
+     * Moves the dino one tile forward, based on the current orientation.
+     * @throws RockInTheWayException when there is a rock on the following tile.
+     * @throws EndOfTerritoryException when the end of the territory is reached.
+     */
     public void moveForward(){
         int rows = territory.getNumberOfRows();
         int cols = territory.getNumberOfCols();
@@ -30,7 +36,11 @@ public class Dino {
             if(col+1 < cols){
                 if(!territory.isRock(row, col+1)) {
                     setCol(col + 1);
+                }else{
+                    throw new RockInTheWayException();
                 }
+            }else{
+                throw new EndOfTerritoryException();
             }
         }
         // north
@@ -38,7 +48,11 @@ public class Dino {
             if(row-1 >= 0 ){
                 if(!territory.isRock(row-1, col)) {
                     setRow(row - 1);
+                }else{
+                    throw new RockInTheWayException();
                 }
+            }else{
+                throw new EndOfTerritoryException();
             }
         }
         // west
@@ -46,7 +60,11 @@ public class Dino {
             if(col-1 >= 0){
                 if(!territory.isRock(row, col-1)) {
                     setCol(col - 1);
+                }else{
+                    throw new RockInTheWayException();
                 }
+            }else{
+                throw new EndOfTerritoryException();
             }
         }
         // south
@@ -54,7 +72,11 @@ public class Dino {
             if(row+1 < rows){
                 if(!territory.isRock(row+1, col)) {
                     setRow(row + 1);
+                }else{
+                    throw new RockInTheWayException();
                 }
+            }else{
+                throw new EndOfTerritoryException();
             }
         }
     }
@@ -63,23 +85,34 @@ public class Dino {
         orientation = orientation.turnLeft();
     }
 
+    /**
+     * Makes the dino pick up a bone, if possible.
+     * @throws MouthFullException when the maximum amount of bones {@code MAX_BONES} the dino can carry is reached.
+     * @throws NoBonesThereException when the selected tile does not contain any bones.
+     */
     public void pickUpBone(){
         if(territory.getBones(row, col) > 0){
-            amountOfBones++;
-            territory.removeBone(row, col);
+            if(amountOfBones+1 > MAX_BONES){
+                amountOfBones++;
+                territory.removeBone(row, col);
+            }else{
+                throw new MouthFullException();
+            }
+        }else{
+            throw new NoBonesThereException();
         }
     }
 
+    /**
+     * Maked the dino put down a bone.
+     * @throws MouthEmptyException when the dino does not have any bones in its mouth.
+     */
     public void putDownBone(){
         if (amountOfBones > 0) {
             territory.placeBone(row, col);
             amountOfBones--;
-        }
-    }
-
-    public void eatBone(){
-        if(amountOfBones > 0){
-            amountOfBones--;
+        }else{
+            throw new MouthEmptyException();
         }
     }
 
@@ -138,5 +171,9 @@ public class Dino {
 
     public void setAmountOfBones(int amountOfBones){
         this.amountOfBones = amountOfBones;
+    }
+
+    public static int getMaxBones() {
+        return MAX_BONES;
     }
 }

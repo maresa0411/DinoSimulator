@@ -22,6 +22,7 @@ public class DinoSimulatorStage extends Stage {
     private Label messageLabel;
     private static final int GAP = 10;
     private static final ImageView dinoWithBones;
+    private static final int MAX_ROWS_COLS = 100;
 
     static{
         dinoWithBones = new ImageView("TrexWithBone.png");
@@ -265,7 +266,7 @@ public class DinoSimulatorStage extends Stage {
         TextArea textArea = new TextArea();
         dinoSimulatorPane = new DinoSimulatorPane(territory);
         ScrollPane scrollPane = new ScrollPane(dinoSimulatorPane);
-        scrollPane.setPannable(true);
+        //scrollPane.setPannable(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
 
@@ -286,6 +287,14 @@ public class DinoSimulatorStage extends Stage {
             placeBoneButton.setSelected(newValue == Selection.PLACE_BONE);
             placeRockButton.setSelected(newValue == Selection.PLACE_ROCK);
             deleteButton.setSelected(newValue == Selection.DELETE);
+
+            switch(newValue){
+                case PLACE_DINO -> placeDinoButton.requestFocus();
+                case PLACE_BONE -> placeBoneButton.requestFocus();
+                case PLACE_ROCK -> placeRockButton.requestFocus();
+                case DELETE -> deleteButton.requestFocus();
+                case NONE -> new ToggleButton().requestFocus();
+            }
         }));
 
         // assembling all parts of the GUI
@@ -293,7 +302,6 @@ public class DinoSimulatorStage extends Stage {
         VBox.setVgrow(splitPane, Priority.ALWAYS);
         root.getChildren().addAll(menuBar, toolBar, splitPane, messageLabel);
 
-        // building stage to display GUI
         setTitle("Dino Simulator");
         setScene(new Scene(root, 800, 500));
     }
@@ -313,15 +321,15 @@ public class DinoSimulatorStage extends Stage {
         dialog.setTitle("Größe des Territoriums anpassen");
 
         ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         Label rowLabel = new Label("Anzahl der Reihen: ");
         TextField rows = new TextField();
-        rows.setPromptText("1-100");
+        rows.setPromptText("1-"+MAX_ROWS_COLS);
 
         Label colLabel = new Label("Anzahl der Spalten: ");
         TextField cols = new TextField();
-        cols.setPromptText("1-100");
+        cols.setPromptText("1-"+MAX_ROWS_COLS);
 
         GridPane gridPane = new GridPane();
         gridPane.setHgap(GAP);
@@ -333,12 +341,12 @@ public class DinoSimulatorStage extends Stage {
 
         dialog.getDialogPane().setContent(gridPane);
 
-        Button okButton = (Button) dialog.getDialogPane().lookupButton(okButtonType);
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         BooleanBinding invalidInput = Bindings.createBooleanBinding(()-> (!isValidRowColInput(rows.getText()) || !isValidRowColInput(cols.getText())), rows.textProperty(), cols.textProperty());
         okButton.disableProperty().bind(invalidInput);
 
         dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == okButtonType) {
+            if (dialogButton.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
                 return new Pair<>(Integer.parseInt(rows.getText()), Integer.parseInt(cols.getText()));
             }
             return null;
@@ -358,7 +366,7 @@ public class DinoSimulatorStage extends Stage {
     private boolean isValidRowColInput(String input){
         try{
             int value = Integer.parseInt(input);
-            return value > 0 && value <= 100;
+            return value > 0 && value <= MAX_ROWS_COLS;
         } catch (NumberFormatException e) {
             return false;
         }
@@ -369,7 +377,7 @@ public class DinoSimulatorStage extends Stage {
         dialog.setTitle("Knochenmenge anpassen");
         dialog.setHeaderText("Gib die gewünschte Anzahl an Knochen ein (0-100)");
         dialog.setGraphic(dinoWithBones);
-        dialog.getEditor().setPromptText("0-100");
+        dialog.getEditor().setPromptText("0-"+ Dino.getMaxBones());
 
         // mit ChatGPT
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
@@ -383,7 +391,7 @@ public class DinoSimulatorStage extends Stage {
     private boolean isValidBoneInput(String input){
         try{
             int value = Integer.parseInt(input);
-            return value >= 0 && value <= 100;
+            return value >= 0 && value <= Dino.getMaxBones();
         }catch(NumberFormatException e){
             return false;
         }
