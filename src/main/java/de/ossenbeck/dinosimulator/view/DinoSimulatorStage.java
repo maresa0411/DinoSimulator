@@ -1,5 +1,8 @@
-package de.ossenbeck.dinosimulator;
+package de.ossenbeck.dinosimulator.view;
 
+import de.ossenbeck.dinosimulator.controller.Selection;
+import de.ossenbeck.dinosimulator.model.Territory;
+import de.ossenbeck.dinosimulator.model.Dino;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -18,7 +21,7 @@ import java.util.Optional;
 public class DinoSimulatorStage extends Stage {
 
     private Territory territory;
-    private DinoSimulatorPane dinoSimulatorPane;
+    private DinoSimulatorPaneView dinoSimulatorPane;
     private Label messageLabel;
     private static final int GAP = 10;
     private static final ImageView dinoWithBones;
@@ -264,7 +267,7 @@ public class DinoSimulatorStage extends Stage {
 
         // GUI main working space
         TextArea textArea = new TextArea();
-        dinoSimulatorPane = new DinoSimulatorPane(territory);
+        dinoSimulatorPane = new DinoSimulatorPaneView(territory);
         ScrollPane scrollPane = new ScrollPane(dinoSimulatorPane);
         //scrollPane.setPannable(true);
         scrollPane.setFitToHeight(true);

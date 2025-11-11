@@ -1,4 +1,7 @@
-package de.ossenbeck.dinosimulator;
+package de.ossenbeck.dinosimulator.test;
+
+import de.ossenbeck.dinosimulator.model.Orientation;
+import de.ossenbeck.dinosimulator.model.Territory;
 
 import java.util.Scanner;
 

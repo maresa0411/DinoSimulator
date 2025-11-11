@@ -1,5 +1,7 @@
-package de.ossenbeck.dinosimulator;
+package de.ossenbeck.dinosimulator.main;
 
+import de.ossenbeck.dinosimulator.model.Territory;
+import de.ossenbeck.dinosimulator.view.DinoSimulatorStage;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

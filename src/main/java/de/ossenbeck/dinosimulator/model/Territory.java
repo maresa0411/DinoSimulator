@@ -1,4 +1,4 @@
-package de.ossenbeck.dinosimulator;
+package de.ossenbeck.dinosimulator.model;
 
 import java.util.Random;
 

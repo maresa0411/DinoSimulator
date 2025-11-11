@@ -1,4 +1,4 @@
-package de.ossenbeck.dinosimulator;
+package de.ossenbeck.dinosimulator.model;
 
 public enum Orientation {
     NORTH, WEST, SOUTH, EAST;
