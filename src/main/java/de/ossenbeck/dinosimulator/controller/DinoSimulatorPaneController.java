@@ -14,7 +14,7 @@ public class DinoSimulatorPaneController {
     private boolean draggingDino = false;
 
 
-    public DinoSimulatorPaneController(DinoSimulatorPaneView pane, Territory territory){
+    public DinoSimulatorPaneController(DinoSimulatorPane pane, Territory territory){
         this.pane = pane;
         this.territory = territory;
         pane.getCanvas().addEventHandler(MouseEvent.MOUSE_PRESSED, this::canvasPressed);

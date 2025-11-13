@@ -1,7 +1,7 @@
 package de.ossenbeck.dinosimulator.main;
 
 import de.ossenbeck.dinosimulator.model.Territory;
-import de.ossenbeck.dinosimulator.view.DinoSimulatorStage;
+import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -19,7 +19,7 @@ public class Main extends Application {
 
     public static void newDinoSimulatorGame(){
         Territory territory = new Territory();
-        DinoSimulatorStage stage = new DinoSimulatorStage(territory);
+        DinoSimulatorStageView stage = new DinoSimulatorStageView(territory);
         stage.show();
     }
 }

@@ -1,7 +1,9 @@
 package de.ossenbeck.dinosimulator.view;
 
 import de.ossenbeck.dinosimulator.controller.DinoSimulatorPaneController;
+import de.ossenbeck.dinosimulator.model.Orientation;
 import de.ossenbeck.dinosimulator.model.Territory;
+import de.ossenbeck.dinosimulator.util.ChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -9,21 +11,19 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 
-public class DinoSimulatorPaneView extends StackPane {
+public class DinoSimulatorPaneView extends StackPane implements ChangeListener {
     private static final int BORDER_SIZE = 50;
     private static final int SIZE = 50;
     private static final int BONE_SIZE = SIZE/3;
     private static final Color TERRITORY_COLOR = Color.rgb(5, 87, 34);
 
+    private final Canvas canvas;
     private static final Image dinoImageEast;
     private static final Image dinoImageSouth;
     private static final Image dinoImageWest;
     private static final Image dinoImageNorth;
     private static final Image rockImage;
     private static final Image boneImage;
-
-    private Canvas canvas;
-    private DinoSimulatorPaneController controller;
 
     static{
         dinoImageEast = new Image("Trex.png");
@@ -34,9 +34,8 @@ public class DinoSimulatorPaneView extends StackPane {
         boneImage = new Image("Bone.png");
     }
 
-    public DinoSimulatorPaneView(Territory territory){
+    public DinoSimulatorPaneView(){
         canvas = new Canvas(calcWidth(), calcHeight());
-        controller = new DinoSimulatorPaneController(this, territory);
         printBoard();
         this.getChildren().add(canvas);
     }
@@ -82,8 +81,9 @@ public class DinoSimulatorPaneView extends StackPane {
 
     }
 
-    public void drawDino(GraphicsContext gc, double x, double y){
-        switch(controller.getTerritory().getDino().getOrientation()){
+    public void drawDino(double x, double y, Orientation orientation){
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        switch(orientation){
             case EAST -> gc.drawImage(dinoImageEast, x, y, SIZE, SIZE);
             case NORTH -> gc.drawImage(dinoImageNorth, x, y, SIZE, SIZE);
             case WEST -> gc.drawImage(dinoImageWest, x, y, SIZE, SIZE);
@@ -101,5 +101,15 @@ public class DinoSimulatorPaneView extends StackPane {
 
     public int getSize(){
         return SIZE;
+    }
+
+    @Override
+    public void onTerritoryChanged() {
+        printBoard();
+    }
+
+    @Override
+    public void onActeurChanged(double x, double y, Orientation orientation) {
+        drawDino(x, y, orientation);
     }
 }
