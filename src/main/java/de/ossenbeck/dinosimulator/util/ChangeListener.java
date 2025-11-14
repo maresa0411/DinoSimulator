@@ -5,5 +5,5 @@ import de.ossenbeck.dinosimulator.model.Orientation;
 public interface ChangeListener {
     public void onTerritoryChanged();
 
-    public void onActeurChanged(double x, double y, Orientation orientation);
+    public void onActorChanged(double x, double y, Orientation orientation);
 }

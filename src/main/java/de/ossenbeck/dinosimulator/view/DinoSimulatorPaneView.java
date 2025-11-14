@@ -1,8 +1,6 @@
 package de.ossenbeck.dinosimulator.view;
-
-import de.ossenbeck.dinosimulator.controller.DinoSimulatorPaneController;
+import de.ossenbeck.dinosimulator.controller.MainController;
 import de.ossenbeck.dinosimulator.model.Orientation;
-import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.ChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -16,6 +14,7 @@ public class DinoSimulatorPaneView extends StackPane implements ChangeListener {
     private static final int SIZE = 50;
     private static final int BONE_SIZE = SIZE/3;
     private static final Color TERRITORY_COLOR = Color.rgb(5, 87, 34);
+    private final MainController mainController;
 
     private final Canvas canvas;
     private static final Image dinoImageEast;
@@ -34,18 +33,19 @@ public class DinoSimulatorPaneView extends StackPane implements ChangeListener {
         boneImage = new Image("Bone.png");
     }
 
-    public DinoSimulatorPaneView(){
+    public DinoSimulatorPaneView(MainController mainController){
+        this.mainController = mainController;
         canvas = new Canvas(calcWidth(), calcHeight());
         printBoard();
         this.getChildren().add(canvas);
     }
 
     private int calcWidth(){
-        return (2*BORDER_SIZE + controller.getTerritory().getNumberOfCols() * SIZE);
+        return (2*BORDER_SIZE + mainController.getNumberOfCols() * SIZE);
     }
 
     private int calcHeight(){
-        return (2*BORDER_SIZE + controller.getTerritory().getNumberOfRows() * SIZE);
+        return (2*BORDER_SIZE + mainController.getNumberOfRows() * SIZE);
     }
 
     public void printBoard(){
@@ -55,28 +55,28 @@ public class DinoSimulatorPaneView extends StackPane implements ChangeListener {
         canvas.setHeight(calcHeight());
         gc.setFill(TERRITORY_COLOR);
 
-        for(int r=0; r<controller.getTerritory().getNumberOfRows(); r++){
-            for(int c=0; c<controller.getTerritory().getNumberOfCols(); c++){
-                gc.fillRect(BORDER_SIZE + c* SIZE, BORDER_SIZE + r* SIZE, SIZE, SIZE);
-                if(controller.isDinoAt(r, c) && !controller.getDraggingDino()){
-                    drawDino(gc, BORDER_SIZE+c*SIZE, BORDER_SIZE+r*SIZE);
-                } else if (controller.isRockAt(r, c)) {
-                    gc.drawImage(rockImage,BORDER_SIZE+c*SIZE, BORDER_SIZE+r*SIZE, SIZE, SIZE);
-                } else if (controller.getBonesAt(r, c) > 0) {
-                    int bones = controller.getBonesAt(r, c);
+        for(int r=0; r<mainController.getNumberOfRows(); r++){
+            for(int c=0; c<mainController.getNumberOfCols(); c++){
+                gc.fillRect(BORDER_SIZE + (double)c* SIZE, BORDER_SIZE + (double)r* SIZE, SIZE, SIZE);
+                if(mainController.isDinoAt(r, c) && !mainController.getDraggingDino()){
+                    drawDino(BORDER_SIZE+(double)c*SIZE, BORDER_SIZE+(double)r*SIZE, mainController.getOrientation());
+                } else if (mainController.isRockAt(r, c)) {
+                    gc.drawImage(rockImage,BORDER_SIZE+(double)c*SIZE, BORDER_SIZE+ (double)r*SIZE, SIZE, SIZE);
+                } else if (mainController.getBonesAt(r, c) > 0) {
+                    int bones = mainController.getBonesAt(r, c);
                     for(int i=0; i< bones; i++){
-                        gc.drawImage(boneImage, BORDER_SIZE+c*SIZE + i%3 * BONE_SIZE, BORDER_SIZE+r*SIZE + i/3 * BONE_SIZE, BONE_SIZE, BONE_SIZE);
+                        gc.drawImage(boneImage, BORDER_SIZE+c*SIZE + (double)i%3 * BONE_SIZE, BORDER_SIZE+r*SIZE + (double)i/3 * BONE_SIZE, BONE_SIZE, BONE_SIZE);
                     }
                 }
             }
         }
         gc.setLineWidth(2.0);
 
-        for(int rows = 0; rows <= controller.getTerritory().getNumberOfRows(); rows++){
-            gc.strokeLine(BORDER_SIZE, BORDER_SIZE + rows*SIZE, BORDER_SIZE+controller.getTerritory().getNumberOfCols()*SIZE, BORDER_SIZE+rows*SIZE);
+        for(int rows = 0; rows <= mainController.getNumberOfRows(); rows++){
+            gc.strokeLine(BORDER_SIZE, BORDER_SIZE + (double) rows*SIZE, BORDER_SIZE+ (double) mainController.getNumberOfCols()*SIZE, BORDER_SIZE+ (double) rows*SIZE);
         }
-        for(int cols = 0; cols <= controller.getTerritory().getNumberOfCols(); cols++){
-            gc.strokeLine(BORDER_SIZE + cols*SIZE, BORDER_SIZE, BORDER_SIZE+cols*SIZE, BORDER_SIZE+controller.getTerritory().getNumberOfRows()*SIZE);
+        for(int cols = 0; cols <= mainController.getNumberOfCols(); cols++){
+            gc.strokeLine(BORDER_SIZE + (double) cols*SIZE, BORDER_SIZE, BORDER_SIZE+ (double) cols*SIZE, BORDER_SIZE+ (double) mainController.getNumberOfRows()*SIZE);
         }
 
     }
@@ -109,7 +109,8 @@ public class DinoSimulatorPaneView extends StackPane implements ChangeListener {
     }
 
     @Override
-    public void onActeurChanged(double x, double y, Orientation orientation) {
+    public void onActorChanged(double x, double y, Orientation orientation) {
+        printBoard();
         drawDino(x, y, orientation);
     }
 }

@@ -1,11 +1,8 @@
 package de.ossenbeck.dinosimulator.view;
 
-import de.ossenbeck.dinosimulator.controller.DinoSimulatorStageController;
-import de.ossenbeck.dinosimulator.controller.Selection;
-import de.ossenbeck.dinosimulator.model.Territory;
+import de.ossenbeck.dinosimulator.controller.MainController;
 import de.ossenbeck.dinosimulator.model.Dino;
-import de.ossenbeck.dinosimulator.util.ChangeListener;
-import javafx.application.Platform;
+import de.ossenbeck.dinosimulator.util.Notifier;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Orientation;
@@ -22,12 +19,11 @@ import java.util.Optional;
 
 public class DinoSimulatorStageView extends Stage {
 
-    private final Label messageLabel;
     private static final int GAP = 10;
     private static final ImageView dinoWithBones;
-    private static final int MAX_ROWS_COLS = 100;
 
-    private final ChangeListener changeListener;
+    private final MainController mainController;
+    private final MessagePane notifier;
 
     private final MenuItem newMenuItem;
     private final MenuItem openMenuItem;
@@ -88,8 +84,9 @@ public class DinoSimulatorStageView extends Stage {
         dinoWithBones.setFitHeight(50);
     }
 
-    public DinoSimulatorStageView(ChangeListener changeListener){
-        this.changeListener = changeListener;
+    public DinoSimulatorStageView(MainController mainController, DinoSimulatorPaneView pane){
+        this.mainController = mainController;
+        this.notifier = new MessagePane();
         // GUI menubar
         MenuBar menuBar = new MenuBar();
 
@@ -299,22 +296,17 @@ public class DinoSimulatorStageView extends Stage {
 
         // GUI main working space
         textArea = new TextArea();
-        ScrollPane scrollPane = new ScrollPane(dinoSimulatorPane);
-        //scrollPane.setPannable(true);
+        ScrollPane scrollPane = new ScrollPane(pane);
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
 
         SplitPane splitPane = new SplitPane();
         splitPane.getItems().addAll(textArea, scrollPane);
 
-        messageLabel = new Label("Willkommen!");
-
-
-
         // assembling all parts of the GUI
         VBox root = new VBox();
         VBox.setVgrow(splitPane, Priority.ALWAYS);
-        root.getChildren().addAll(menuBar, toolBar, splitPane, messageLabel);
+        root.getChildren().addAll(menuBar, toolBar, splitPane, notifier);
 
         setTitle("Dino Simulator");
         setScene(new Scene(root, 800, 500));
@@ -326,18 +318,17 @@ public class DinoSimulatorStageView extends Stage {
         Dialog<Pair<Integer, Integer>> dialog = new Dialog<>();
         dialog.setTitle("Größe des Territoriums anpassen");
 
-        ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        Label rowLabel = new Label("Anzahl der Reihen (1-" + MAX_ROWS_COLS + "):");
+        Label rowLabel = new Label("Anzahl der Reihen (1-" + mainController.getMaxRowsCols() + "):");
         TextField rows = new TextField();
-        rows.setPromptText("1-"+MAX_ROWS_COLS);
-        rows.setText(String.valueOf(territory.getNumberOfRows()));
+        rows.setPromptText("1-"+mainController.getMaxRowsCols());
+        rows.setText(String.valueOf(mainController.getNumberOfRows()));
 
-        Label colLabel = new Label("Anzahl der Spalten (1-" + MAX_ROWS_COLS + "):");
+        Label colLabel = new Label("Anzahl der Spalten (1-" + mainController.getMaxRowsCols() + "):");
         TextField cols = new TextField();
-        cols.setPromptText("1-"+MAX_ROWS_COLS);
-        cols.setText(String.valueOf(territory.getNumberOfCols()));
+        cols.setPromptText("1-"+mainController.getMaxRowsCols());
+        cols.setText(String.valueOf(mainController.getNumberOfCols()));
 
         GridPane gridPane = new GridPane();
         gridPane.setHgap(GAP);
@@ -350,7 +341,7 @@ public class DinoSimulatorStageView extends Stage {
         dialog.getDialogPane().setContent(gridPane);
 
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
-        BooleanBinding invalidInput = Bindings.createBooleanBinding(()-> (!controller.isValidRowColInput(rows.getText()) || !isValidRowColInput(cols.getText())), rows.textProperty(), cols.textProperty());
+        BooleanBinding invalidInput = Bindings.createBooleanBinding(()-> (!mainController.isValidRowColInput(rows.getText()) || !mainController.isValidRowColInput(cols.getText())), rows.textProperty(), cols.textProperty());
         okButton.disableProperty().bind(invalidInput);
 
         dialog.setResultConverter(dialogButton -> {
@@ -365,8 +356,8 @@ public class DinoSimulatorStageView extends Stage {
         if(result.isPresent()){
             int r = result.get().getKey();
             int c = result.get().getValue();
-            territory.resize(r,c);
-            dinoSimulatorPane.printBoard();
+            mainController.handleResize(r, c);
+            notifier.post("Größe des Territoriums auf " + r + "x" + c + " geändert.");
         }
 
     }
@@ -377,16 +368,22 @@ public class DinoSimulatorStageView extends Stage {
         dialog.setHeaderText("Gib die gewünschte Anzahl an Knochen ein (0-" + Dino.getMaxBones() + ")");
         dialog.setGraphic(dinoWithBones);
         dialog.getEditor().setPromptText("0-" + Dino.getMaxBones());
-        dialog.getEditor().setText(String.valueOf(territory.getDino().getAmountOfBones()));
+        dialog.getEditor().setText(String.valueOf(mainController.getAmountOfBonesOfDino()));
 
         // mit ChatGPT
         Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
-        BooleanBinding invalidInput = Bindings.createBooleanBinding(() -> !controller.isValidBoneInput(dialog.getEditor().getText()), dialog.getEditor().textProperty());
+        BooleanBinding invalidInput = Bindings.createBooleanBinding(() -> !mainController.isValidBoneInput(dialog.getEditor().getText()), dialog.getEditor().textProperty());
         okButton.disableProperty().bind(invalidInput);
         Optional<String> result = dialog.showAndWait();
 
-        result.ifPresent(s -> territory.getDino().setAmountOfBones(Integer.parseInt(s)));
+        result.ifPresent(s -> {
+            int amount = Integer.parseInt(s);
+            mainController.handleChangeAmountOfBones(amount);
+            notifier.post("Anzahl der Knochen im Maul des Dinos auf " + amount +" geändert.");
+        });
     }
+
+    // The unused getters will be used later to implement the action
 
     public MenuItem getNewMenuItem() {
         return newMenuItem;
@@ -564,11 +561,7 @@ public class DinoSimulatorStageView extends Stage {
         return textArea;
     }
 
-    public DinoSimulatorPaneView getPane() {
-        return dinoSimulatorPane;
-    }
-
-    public int getMaxRowsCols(){
-        return MAX_ROWS_COLS;
+    public Notifier getNotifier(){
+        return notifier;
     }
 }
