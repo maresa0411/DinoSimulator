@@ -32,22 +32,11 @@ public class Dino {
      * @throws EndOfTerritoryException when the end of the territory is reached.
      */
     public void moveForward(){
-        // east
-        if(orientation == Orientation.EAST){
-            moveForwardHelp(row, col+1);
-        }
-        // north
-        else if(orientation == Orientation.NORTH){
-            moveForwardHelp(row-1, col);
-        }
-        // west
-        else if(orientation == Orientation.WEST){
-            moveForwardHelp(row, col-1);
-        }
-        // south
-        else if(orientation == Orientation.SOUTH){
-            moveForwardHelp(row+1, col);
-
+        switch (orientation){
+            case EAST -> moveForwardHelp(row, col+1);
+            case SOUTH -> moveForwardHelp(row+1, col);
+            case WEST -> moveForwardHelp(row, col-1);
+            case NORTH -> moveForwardHelp(row-1, col);
         }
         territory.onTerritoryChange();
         notifier.post("Dino vorwärts bewegt.");
@@ -55,7 +44,7 @@ public class Dino {
 
     private void moveForwardHelp(int nextRow, int nextCol){
         if(nextRow < territory.getNumberOfRows() && nextCol < territory.getNumberOfCols()){
-            if(!territory.isRock(row+1, col)) {
+            if(!territory.isRock(nextRow, nextCol)) {
                 setPosition(nextRow, nextCol);
             }else{
                 notifier.post("Felsen im Weg!");

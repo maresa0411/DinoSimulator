@@ -65,7 +65,7 @@ public class DinoSimulatorPaneView extends StackPane implements ChangeListener {
                 } else if (mainController.getBonesAt(r, c) > 0) {
                     int bones = mainController.getBonesAt(r, c);
                     for(int i=0; i< bones; i++){
-                        gc.drawImage(boneImage, BORDER_SIZE+c*SIZE + (double)i%3 * BONE_SIZE, BORDER_SIZE+r*SIZE + (double)i/3 * BONE_SIZE, BONE_SIZE, BONE_SIZE);
+                        gc.drawImage(boneImage, BORDER_SIZE+c*SIZE + (double)i%3 * BONE_SIZE, BORDER_SIZE+r*SIZE + Math.floor((double)i/3) * BONE_SIZE, BONE_SIZE, BONE_SIZE);
                     }
                 }
             }
