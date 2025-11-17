@@ -1,7 +1,5 @@
 package de.ossenbeck.dinosimulator.model;
 
-import de.ossenbeck.dinosimulator.util.Notifier;
-
 public class Dino {
     private int row;
     private int col;
@@ -9,8 +7,6 @@ public class Dino {
     private Orientation orientation;
     private Territory territory;
     private static final int MAX_BONES = 100;
-    private Notifier notifier;
-
     /**
      * @param territory Territory
      * @param row Row (must be >= 0 and < {@code territoryRows})
@@ -18,9 +14,8 @@ public class Dino {
      * @throws IllegalArgumentException when {@code row} or {@code col} < 0
      */
 
-    public Dino(Territory territory, int row, int col, Notifier notifier){
+    public Dino(Territory territory, int row, int col){
         this.territory = territory;
-        this.notifier = notifier;
         setPosition(row, col);
         resetAmountOfBones();
         orientation = Orientation.EAST;
@@ -39,19 +34,16 @@ public class Dino {
             case NORTH -> moveForwardHelp(row-1, col);
         }
         territory.onTerritoryChange();
-        notifier.post("Dino vorwärts bewegt.");
     }
 
     private void moveForwardHelp(int nextRow, int nextCol){
-        if(nextRow < territory.getNumberOfRows() && nextCol < territory.getNumberOfCols()){
+        if(nextRow < territory.getNumberOfRows() && nextCol < territory.getNumberOfCols() && nextCol >= 0 && nextRow >=0){
             if(!territory.isRock(nextRow, nextCol)) {
                 setPosition(nextRow, nextCol);
             }else{
-                notifier.post("Felsen im Weg!");
                 throw new RockInTheWayException();
             }
         }else{
-            notifier.post("Ende des Territoriums erreicht!");
             throw new EndOfTerritoryException();
         }
     }
@@ -59,7 +51,6 @@ public class Dino {
     public void turnLeft(){
         orientation = orientation.turnLeft();
         territory.onTerritoryChange();
-        notifier.post("Dino nach links gedreht.");
     }
 
     /**
@@ -72,14 +63,11 @@ public class Dino {
             if(amountOfBones+1 < MAX_BONES){
                 amountOfBones++;
                 territory.removeBone(row, col);
-                notifier.post("Der Dino hat einen Knochen aufgesammelt.");
                 territory.onTerritoryChange();
             }else{
-                notifier.post("Der Dino kann keine weitere Knochen mehr aufsammeln!");
                 throw new MouthFullException();
             }
         }else{
-            notifier.post("Keine Knochen zum Aufheben verfügbar!");
             throw new NoBonesThereException();
         }
     }
@@ -90,11 +78,13 @@ public class Dino {
      */
     public void putDownBone(){
         if (amountOfBones > 0) {
-            territory.placeBone(row, col);
-            amountOfBones--;
-            notifier.post("Der Dino hat einen Knochen abgelegt!");
+            if(territory.getBones(row, col) < territory.getMaxBones()){
+                territory.placeBone(row, col);
+                amountOfBones--;
+            }else{
+                throw new TooManyBonesException();
+            }
         }else{
-            notifier.post("Der Dino hat keine Knochen im Maul, die er ablegen kann!");
             throw new MouthEmptyException();
         }
         territory.onTerritoryChange();
@@ -165,6 +155,4 @@ public class Dino {
     public int getAmountOfBones(){
         return amountOfBones;
     }
-
-    public void setNotifier(Notifier notifier){this.notifier = notifier;}
 }

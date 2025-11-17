@@ -1,8 +1,6 @@
 package de.ossenbeck.dinosimulator.model;
 
-import de.ossenbeck.dinosimulator.util.ChangeListener;
-import de.ossenbeck.dinosimulator.util.Notifier;
-import de.ossenbeck.dinosimulator.view.MessagePane;
+import de.ossenbeck.dinosimulator.util.TerritoryChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +13,7 @@ public class Territory {
     private static final int ROCK = -1;
     private static final int EMPTY = 0;
     private static final int MAX_BONES = 9;
-    private final List<ChangeListener> listener;
-    private Notifier notifier;
+    private final List<TerritoryChangeListener> listener;
     private Random random = new Random();
 
     public Territory(){
@@ -31,7 +28,6 @@ public class Territory {
 
     public Territory(int rows, int cols){
         listener = new ArrayList<>();
-        notifier = new MessagePane();
         if(rows <= 0 || cols <= 0){
             throw new IllegalArgumentException("Rows and columns must be > 0");
         }else {
@@ -46,8 +42,7 @@ public class Territory {
                 territoryField[r][c] = EMPTY;
             }
         }
-        dino = new Dino(this, 0,0, notifier);
-        notifier.post("Territorium resetted.");
+        dino = new Dino(this, 0,0);
         onTerritoryChange();
     }
 
@@ -91,7 +86,6 @@ public class Territory {
         checkRowAndCol(row, col);
         if(dino.getRow() != row || dino.getCol() != col) {
             territoryField[row][col] = ROCK;
-            notifier.post(placeItemOnText("Knochen", row, col));
             onTerritoryChange();
         }else{
             throw new DinoInTheWayException();
@@ -115,10 +109,8 @@ public class Territory {
             territoryField[row][col]++;
             onTerritoryChange();
         }else{
-            notifier.post("Auf diesem Feld können keine weiteren Knochen mehr platziert werden.");
             throw new TooManyBonesException();
         }
-        notifier.post(placeItemOnText("Knochen", row, col));
     }
 
     /**
@@ -132,10 +124,8 @@ public class Territory {
         checkRowAndCol(row, col);
         if(territoryField[row][col] != ROCK) {
             dino.setPosition(row, col);
-            notifier.post(placeItemOnText("Dino", row, col));
             onTerritoryChange();
         }else{
-            notifier.post("Der Dino kann hier nicht platziert werden, da ein Felsen im Weg ist");
             throw new RockInTheWayException();
         }
     }
@@ -150,7 +140,6 @@ public class Territory {
         checkRowAndCol(row, col);
         territoryField[row][col] = EMPTY;
         onTerritoryChange();
-        notifier.post("Feld ("+row+"|"+col+") wurde gelöscht.");
     }
 
     /**
@@ -179,6 +168,10 @@ public class Territory {
     public boolean isRock(int row, int col){
         checkRowAndCol(row, col);
         return territoryField[row][col] == ROCK;
+    }
+
+    public boolean isDinoAt(int row, int col){
+        return (dino.getRow() == row && dino.getCol() == col);
     }
 
     /**
@@ -240,32 +233,17 @@ public class Territory {
         onTerritoryChange();
     }
 
-    public void addListener(ChangeListener listener){
+    public void addListener(TerritoryChangeListener listener){
         this.listener.add(listener);
     }
 
     public void onTerritoryChange(){
-        for(ChangeListener l:listener){
+        for(TerritoryChangeListener l:listener){
             l.onTerritoryChanged();
         }
     }
 
-    public void onActorChange(double x, double y){
-        for(ChangeListener l:listener){
-            l.onActorChanged(x, y, dino.getOrientation());
-        }
-    }
-
-    public void setNotifier(Notifier notifier){
-        this.notifier = notifier;
-        dino.setNotifier(notifier);
-    }
-
-    public Notifier getNotifier(){
-        return notifier;
-    }
-
-    private String placeItemOnText(String item, int row, int col){
-        return item + " auf (" + row + "|" + col +") platziert";
+    public int getMaxBones(){
+        return MAX_BONES;
     }
 }

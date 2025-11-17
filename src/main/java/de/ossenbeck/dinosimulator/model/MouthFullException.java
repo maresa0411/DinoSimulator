@@ -1,7 +1,7 @@
 package de.ossenbeck.dinosimulator.model;
 
-public class MouthFullException extends RuntimeException{
+public class MouthFullException extends DinoTerritoryException{
     public MouthFullException(){
-        super();
+        super("Maul voll!");
     }
 }

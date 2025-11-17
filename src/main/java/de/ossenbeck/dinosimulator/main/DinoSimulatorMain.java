@@ -1,9 +1,9 @@
 package de.ossenbeck.dinosimulator.main;
 
-import de.ossenbeck.dinosimulator.controller.DinoSimulatorPaneController;
-import de.ossenbeck.dinosimulator.controller.DinoSimulatorStageController;
-import de.ossenbeck.dinosimulator.controller.MainController;
+import de.ossenbeck.dinosimulator.controller.DesignController;
+import de.ossenbeck.dinosimulator.controller.DinoChangeControlller;
 import de.ossenbeck.dinosimulator.model.Territory;
+import de.ossenbeck.dinosimulator.util.Notifier;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorPaneView;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
 import javafx.application.Application;
@@ -23,13 +23,13 @@ public class DinoSimulatorMain extends Application {
 
     public static void newDinoSimulatorGame(){
         Territory territory = new Territory();
-        MainController mainController = new MainController(territory);
-        DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(mainController);
+        DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
+        DinoSimulatorStageView stageView = new DinoSimulatorStageView(territory, paneView);
+        Notifier notifier = stageView.getNotifier();
+        DesignController designController = new DesignController(territory, stageView, paneView, notifier);
+        new DinoChangeControlller(territory, stageView, notifier);
+        designController.addDinoDragListener(paneView);
         territory.addListener(paneView);
-        DinoSimulatorStageView stageView = new DinoSimulatorStageView(mainController, paneView);
-        territory.setNotifier(stageView.getNotifier());
-        new DinoSimulatorStageController(territory, stageView, mainController);
-        new DinoSimulatorPaneController(territory, paneView, mainController);
         stageView.show();
     }
 }

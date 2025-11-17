@@ -1,7 +1,7 @@
 package de.ossenbeck.dinosimulator.model;
 
-public class EndOfTerritoryException extends RuntimeException{
+public class EndOfTerritoryException extends DinoTerritoryException{
     public EndOfTerritoryException(){
-        super();
+        super("Ende des Territoriums erreicht!");
     }
 }

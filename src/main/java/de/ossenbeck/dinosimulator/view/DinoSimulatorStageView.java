@@ -1,28 +1,18 @@
 package de.ossenbeck.dinosimulator.view;
 
-import de.ossenbeck.dinosimulator.controller.MainController;
-import de.ossenbeck.dinosimulator.model.Dino;
+import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.Notifier;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Pair;
-import java.util.Optional;
 
 public class DinoSimulatorStageView extends Stage {
-
-    private static final int GAP = 10;
-    private static final ImageView dinoWithBones;
-
-    private final MainController mainController;
+    private final Territory territory;
     private final MessagePane notifier;
 
     private final MenuItem newMenuItem;
@@ -78,14 +68,8 @@ public class DinoSimulatorStageView extends Stage {
     private final Slider slider;
     private final TextArea textArea;
 
-    static{
-        dinoWithBones = new ImageView("TrexWithBone.png");
-        dinoWithBones.setFitWidth(50);
-        dinoWithBones.setFitHeight(50);
-    }
-
-    public DinoSimulatorStageView(MainController mainController, DinoSimulatorPaneView pane){
-        this.mainController = mainController;
+    public DinoSimulatorStageView(Territory territory, DinoSimulatorPaneView pane){
+        this.territory = territory;
         this.notifier = new MessagePane();
         // GUI menubar
         MenuBar menuBar = new MenuBar();
@@ -310,77 +294,6 @@ public class DinoSimulatorStageView extends Stage {
 
         setTitle("Dino Simulator");
         setScene(new Scene(root, 800, 500));
-    }
-
-
-    //StackOverflow (https://stackoverflow.com/questions/31556373/javafx-dialog-with-2-input-fields)
-    public void changeSizeDialog(){
-        Dialog<Pair<Integer, Integer>> dialog = new Dialog<>();
-        dialog.setTitle("Größe des Territoriums anpassen");
-
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        Label rowLabel = new Label("Anzahl der Reihen (1-" + mainController.getMaxRowsCols() + "):");
-        TextField rows = new TextField();
-        rows.setPromptText("1-"+mainController.getMaxRowsCols());
-        rows.setText(String.valueOf(mainController.getNumberOfRows()));
-
-        Label colLabel = new Label("Anzahl der Spalten (1-" + mainController.getMaxRowsCols() + "):");
-        TextField cols = new TextField();
-        cols.setPromptText("1-"+mainController.getMaxRowsCols());
-        cols.setText(String.valueOf(mainController.getNumberOfCols()));
-
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(GAP);
-        gridPane.setVgap(GAP);
-        gridPane.add(rowLabel, 0, 0);
-        gridPane.add(rows, 1, 0);
-        gridPane.add(colLabel, 0, 1);
-        gridPane.add(cols, 1, 1);
-
-        dialog.getDialogPane().setContent(gridPane);
-
-        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
-        BooleanBinding invalidInput = Bindings.createBooleanBinding(()-> (!mainController.isValidRowColInput(rows.getText()) || !mainController.isValidRowColInput(cols.getText())), rows.textProperty(), cols.textProperty());
-        okButton.disableProperty().bind(invalidInput);
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-                return new Pair<>(Integer.parseInt(rows.getText()), Integer.parseInt(cols.getText()));
-            }
-            return null;
-        });
-
-        Optional<Pair<Integer, Integer>> result = dialog.showAndWait();
-
-        if(result.isPresent()){
-            int r = result.get().getKey();
-            int c = result.get().getValue();
-            mainController.handleResize(r, c);
-            notifier.post("Größe des Territoriums auf " + r + "x" + c + " geändert.");
-        }
-
-    }
-
-    public void changeAmountOfBonesDialog() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Knochenmenge anpassen");
-        dialog.setHeaderText("Gib die gewünschte Anzahl an Knochen ein (0-" + Dino.getMaxBones() + ")");
-        dialog.setGraphic(dinoWithBones);
-        dialog.getEditor().setPromptText("0-" + Dino.getMaxBones());
-        dialog.getEditor().setText(String.valueOf(mainController.getAmountOfBonesOfDino()));
-
-        // mit ChatGPT
-        Button okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
-        BooleanBinding invalidInput = Bindings.createBooleanBinding(() -> !mainController.isValidBoneInput(dialog.getEditor().getText()), dialog.getEditor().textProperty());
-        okButton.disableProperty().bind(invalidInput);
-        Optional<String> result = dialog.showAndWait();
-
-        result.ifPresent(s -> {
-            int amount = Integer.parseInt(s);
-            mainController.handleChangeAmountOfBones(amount);
-            notifier.post("Anzahl der Knochen im Maul des Dinos auf " + amount +" geändert.");
-        });
     }
 
     // The unused getters will be used later to implement the action
