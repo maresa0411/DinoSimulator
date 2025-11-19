@@ -1,6 +1,6 @@
 package de.ossenbeck.dinosimulator.main;
 
-import de.ossenbeck.dinosimulator.controller.DesignController;
+import de.ossenbeck.dinosimulator.controller.TerritoryDesignerController;
 import de.ossenbeck.dinosimulator.controller.DinoChangeControlller;
 import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.Notifier;
@@ -24,9 +24,9 @@ public class DinoSimulatorMain extends Application {
     public static void newDinoSimulatorGame(){
         Territory territory = new Territory();
         DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
-        DinoSimulatorStageView stageView = new DinoSimulatorStageView(territory, paneView);
+        DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
         Notifier notifier = stageView.getNotifier();
-        DesignController designController = new DesignController(territory, stageView, paneView, notifier);
+        TerritoryDesignerController designController = new TerritoryDesignerController(territory, stageView, paneView, notifier);
         new DinoChangeControlller(territory, stageView, notifier);
         designController.addDinoDragListener(paneView);
         territory.addListener(paneView);

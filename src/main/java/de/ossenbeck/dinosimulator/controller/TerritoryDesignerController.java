@@ -15,7 +15,7 @@ import javafx.scene.input.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DesignController {
+public class TerritoryDesignerController {
     private final Territory territory;
     private final DinoSimulatorStageView stage;
     private final DinoSimulatorPaneView pane;
@@ -26,7 +26,7 @@ public class DesignController {
     private ObjectProperty<Selection> selectedAction;
     private boolean draggingDino;
 
-    public DesignController(Territory territory, DinoSimulatorStageView stage, DinoSimulatorPaneView pane, Notifier notifier){
+    public TerritoryDesignerController(Territory territory, DinoSimulatorStageView stage, DinoSimulatorPaneView pane, Notifier notifier){
         this.territory = territory;
         this.stage = stage;
         this.pane = pane;
@@ -175,7 +175,6 @@ public class DesignController {
         stage.getPlaceBoneCheckMenuItem().setOnAction(_ -> selectAction(Selection.PLACE_BONE));
         stage.getPlaceRockCheckMenuItem().setOnAction(_ -> selectAction(Selection.PLACE_ROCK));
         stage.getDeleteCheckMenuItem().setOnAction(_ -> selectAction(Selection.DELETE));
-
     }
 
     private void addActionsToButtons(){
@@ -185,7 +184,6 @@ public class DesignController {
         stage.getPlaceBoneButton().setOnAction(_ -> selectAction(Selection.PLACE_BONE));
         stage.getPlaceRockButton().setOnAction(_ -> selectAction(Selection.PLACE_ROCK));
         stage.getDeleteButton().setOnAction(_ -> selectAction(Selection.DELETE));
-
     }
 
 

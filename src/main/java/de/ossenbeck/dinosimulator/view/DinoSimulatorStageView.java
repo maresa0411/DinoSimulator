@@ -1,6 +1,5 @@
 package de.ossenbeck.dinosimulator.view;
 
-import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.Notifier;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -12,7 +11,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class DinoSimulatorStageView extends Stage {
-    private final Territory territory;
     private final MessagePane notifier;
 
     private final MenuItem newMenuItem;
@@ -68,8 +66,7 @@ public class DinoSimulatorStageView extends Stage {
     private final Slider slider;
     private final TextArea textArea;
 
-    public DinoSimulatorStageView(Territory territory, DinoSimulatorPaneView pane){
-        this.territory = territory;
+    public DinoSimulatorStageView(DinoSimulatorPaneView pane){
         this.notifier = new MessagePane();
         // GUI menubar
         MenuBar menuBar = new MenuBar();
