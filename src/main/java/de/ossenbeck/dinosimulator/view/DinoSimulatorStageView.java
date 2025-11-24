@@ -17,7 +17,7 @@ public class DinoSimulatorStageView extends Stage {
     private final MenuItem openMenuItem;
     private final MenuItem compileMenuItem;
     private final MenuItem printEditorMenuItem;
-    private final MenuItem stopMenuItem;
+    private final MenuItem quitMenuItem;
     private final MenuItem saveXMLMenuItem;
     private final MenuItem saveJAXBMenuItem;
     private final MenuItem serializeMenuItem;
@@ -93,10 +93,10 @@ public class DinoSimulatorStageView extends Stage {
 
         SeparatorMenuItem separatorMenuItem2 = new SeparatorMenuItem();
 
-        stopMenuItem = new MenuItem("_Beenden");
-        stopMenuItem.setAccelerator(KeyCombination.keyCombination("SHORTCUT+Q"));
+        quitMenuItem = new MenuItem("_Beenden");
+        quitMenuItem.setAccelerator(KeyCombination.keyCombination("SHORTCUT+Q"));
 
-        editorMenu.getItems().addAll(newMenuItem, openMenuItem, separatorMenuItem1,compileMenuItem, printEditorMenuItem, separatorMenuItem2,stopMenuItem);
+        editorMenu.getItems().addAll(newMenuItem, openMenuItem, separatorMenuItem1,compileMenuItem, printEditorMenuItem, separatorMenuItem2, quitMenuItem);
 
         // GUI territorium menu
         Menu territoriumMenu = new Menu("_Territorium");
@@ -311,8 +311,8 @@ public class DinoSimulatorStageView extends Stage {
         return printEditorMenuItem;
     }
 
-    public MenuItem getStopMenuItem() {
-        return stopMenuItem;
+    public MenuItem getQuitMenuItem() {
+        return quitMenuItem;
     }
 
     public MenuItem getSaveXMLMenuItem() {

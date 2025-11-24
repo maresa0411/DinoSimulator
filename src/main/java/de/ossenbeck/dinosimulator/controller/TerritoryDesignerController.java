@@ -6,7 +6,6 @@ import de.ossenbeck.dinosimulator.util.DinoDragListener;
 import de.ossenbeck.dinosimulator.util.Notifier;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorPaneView;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.ToggleButton;
@@ -33,6 +32,7 @@ public class TerritoryDesignerController {
         this.notifier = notifier;
 
         listener = new ArrayList<>();
+        listener.add(pane);
         selectedAction = new SimpleObjectProperty<>(Selection.NONE);
         draggingDino = false;
 
@@ -168,7 +168,6 @@ public class TerritoryDesignerController {
     }
 
     private void addActionsToMenuItems(){
-        stage.getStopMenuItem().setOnAction(_ -> Platform.exit());
         stage.getChangeSizeMenuItem().setOnAction(_ -> new ResizeTerritoryDialog(territory, notifier));
 
         stage.getPlaceDinoCheckMenuItem().setOnAction(_ -> selectAction(Selection.PLACE_DINO));

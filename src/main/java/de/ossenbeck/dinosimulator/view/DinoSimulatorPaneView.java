@@ -40,6 +40,7 @@ public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeL
         canvas = new Canvas(calcWidth(), calcHeight());
         printBoard(false);
         this.getChildren().add(canvas);
+        territory.addListener(this);
     }
 
     private int calcWidth(){
