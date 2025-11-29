@@ -399,7 +399,7 @@ public class DinoSimulatorStageView extends Stage {
         return newButton;
     }
 
-    public Button getLoadButton() {
+    public Button getOpenButton() {
         return loadButton;
     }
 

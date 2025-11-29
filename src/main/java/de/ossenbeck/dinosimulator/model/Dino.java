@@ -7,6 +7,14 @@ public class Dino {
     private Orientation orientation;
     private Territory territory;
     private static final int MAX_BONES = 100;
+
+    public Dino(){
+        territory = new Territory();
+        setPosition(0, 0);
+        resetAmountOfBones();
+        orientation = Orientation.EAST;
+    }
+
     /**
      * @param territory Territory
      * @param row Row (must be >= 0 and < {@code territoryRows})

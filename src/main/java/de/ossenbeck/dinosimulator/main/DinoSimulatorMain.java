@@ -1,12 +1,6 @@
 package de.ossenbeck.dinosimulator.main;
 
-import de.ossenbeck.dinosimulator.controller.StageController;
-import de.ossenbeck.dinosimulator.controller.TerritoryDesignerController;
-import de.ossenbeck.dinosimulator.controller.DinoChangeControlller;
-import de.ossenbeck.dinosimulator.model.Territory;
-import de.ossenbeck.dinosimulator.util.Notifier;
-import de.ossenbeck.dinosimulator.view.DinoSimulatorPaneView;
-import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
+import de.ossenbeck.dinosimulator.controller.GameController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -19,17 +13,6 @@ public class DinoSimulatorMain extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        newDinoSimulatorGame();
-    }
-
-    public static void newDinoSimulatorGame(){
-        Territory territory = new Territory();
-        DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
-        DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
-        Notifier notifier = stageView.getNotifier();
-        new TerritoryDesignerController(territory, stageView, paneView, notifier);
-        new DinoChangeControlller(territory, stageView, notifier);
-        new StageController(stageView);
-        stageView.show();
+        GameController.openDefault();
     }
 }
