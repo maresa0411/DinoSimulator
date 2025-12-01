@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameController {
-    protected static final List<String> openedPrograms = new ArrayList<>();
+    protected static final List<String> OPENED_PROGRAMS = new ArrayList<>();
     private static final String DEFAULT_TEXT = "void main(){" +System.lineSeparator()+"}";
     private static final String DEFAULT_NAME = "DefaultDino";
     private static final Path DEFAULT_DINO_FILE = Path.of(SaveLoadController.PROGRAMS_PATH + File.separator + DEFAULT_NAME + SaveLoadController.FILENAME_END);
@@ -26,7 +26,7 @@ public class GameController {
      * @param title Name of the Game
      */
     public static void newDinoSimulatorGame(String title){
-        openedPrograms.add(title);
+        OPENED_PROGRAMS.add(title);
         Territory territory = new Territory();
         DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
         DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
@@ -44,7 +44,7 @@ public class GameController {
      */
     public static void openDefault(){
         if(!isOpened(DEFAULT_NAME)){
-            openedPrograms.add(DEFAULT_NAME);
+            OPENED_PROGRAMS.add(DEFAULT_NAME);
             Territory territory = new Territory();
             DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
             DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
@@ -79,7 +79,7 @@ public class GameController {
 
     public static void loadDinoSimulatorGame(Program program){
         if(!isOpened(program.getTitle())) {
-            openedPrograms.add(program.getTitle());
+            OPENED_PROGRAMS.add(program.getTitle());
             Territory territory = new Territory();
             DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
             DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
@@ -96,11 +96,11 @@ public class GameController {
 
     public static boolean isOpened(String title){
         if(title == null) {return false;}
-        return openedPrograms.contains(title);
+        return OPENED_PROGRAMS.contains(title);
     }
 
     public static void endGame(String title){
-        openedPrograms.remove(title);}
+        OPENED_PROGRAMS.remove(title);}
 
-    public static boolean allWindowsClosed(){return openedPrograms.isEmpty();}
+    public static boolean allWindowsClosed(){return OPENED_PROGRAMS.isEmpty();}
 }
