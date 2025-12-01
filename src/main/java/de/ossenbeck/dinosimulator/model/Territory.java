@@ -36,6 +36,11 @@ public class Territory {
         }
     }
 
+    public void setDino(Dino dino){
+        this.dino = dino;
+        onTerritoryChange();
+    }
+
     public void reset(){
         for(int r=0; r < getNumberOfRows(); r++){
             for(int c=0; c < getNumberOfCols(); c++){
@@ -235,6 +240,14 @@ public class Territory {
 
     public void addListener(TerritoryChangeListener listener){
         this.listener.add(listener);
+    }
+
+    public void transferTerritoryChangeListener(Territory newTerritory){
+        for(TerritoryChangeListener l:listener){
+            newTerritory.addListener(l);
+        }
+        listener.clear();
+        newTerritory.onTerritoryChange();
     }
 
     public void onTerritoryChange(){

@@ -11,8 +11,10 @@ import java.util.Optional;
 
 public class StageController {
     private final DinoSimulatorStageView stage;
-    public StageController(final DinoSimulatorStageView stage){
+    private final CompileController compileController;
+    public StageController(final DinoSimulatorStageView stage, final CompileController compileController){
         this.stage = stage;
+        this.compileController = compileController;
         stage.getQuitMenuItem().setOnAction(_ -> closeWindow());
         stage.setOnCloseRequest(event -> {
             if(!closeWindow()) event.consume();
@@ -39,6 +41,7 @@ public class StageController {
             alert.showAndWait();
         }else{
             GameController.loadDinoSimulatorGame(program);
+            compileController.compileFile();
         }
     }
 

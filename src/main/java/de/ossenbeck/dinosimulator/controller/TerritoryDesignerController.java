@@ -4,18 +4,20 @@ import de.ossenbeck.dinosimulator.dialogs.ResizeTerritoryDialog;
 import de.ossenbeck.dinosimulator.model.*;
 import de.ossenbeck.dinosimulator.util.DinoDragListener;
 import de.ossenbeck.dinosimulator.util.Notifier;
+import de.ossenbeck.dinosimulator.view.DinoContextMenu;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorPaneView;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TerritoryDesignerController {
-    private final Territory territory;
+    private final DinoSimulatorGame game;
     private final DinoSimulatorStageView stage;
     private final DinoSimulatorPaneView pane;
     private final Notifier notifier;
@@ -25,8 +27,8 @@ public class TerritoryDesignerController {
     private ObjectProperty<Selection> selectedAction;
     private boolean draggingDino;
 
-    public TerritoryDesignerController(Territory territory, DinoSimulatorStageView stage, DinoSimulatorPaneView pane, Notifier notifier){
-        this.territory = territory;
+    public TerritoryDesignerController(DinoSimulatorGame game, DinoSimulatorStageView stage, DinoSimulatorPaneView pane, Notifier notifier){
+        this.game = game;
         this.stage = stage;
         this.pane = pane;
         this.notifier = notifier;
@@ -44,6 +46,8 @@ public class TerritoryDesignerController {
         pane.getCanvas().addEventHandler(MouseEvent.MOUSE_PRESSED, this::canvasPressed);
         pane.getCanvas().addEventHandler(MouseEvent.MOUSE_DRAGGED, this::canvasDragged);
         pane.getCanvas().addEventHandler(MouseEvent.MOUSE_RELEASED, this::canvasReleased);
+
+        pane.setOnContextMenuRequested(this::contextMenuRequest);
     }
 
     private void canvasPressed(MouseEvent event){
@@ -56,7 +60,7 @@ public class TerritoryDesignerController {
         int row = (int) (y-pane.getBorderSize())/pane.getSize();
         int col = (int) (x-pane.getBorderSize())/pane.getSize();
 
-        if(territory.getDino().getRow()==row && territory.getDino().getCol() == col){
+        if(game.getTerritory().getDino().getRow()==row && game.getTerritory().getDino().getCol() == col){
             draggingDino = true;
             onDragDino();
             notifier.post("Ziehe den Dino auf ein beliebiges Feld, auf dem kein Felsen steht.");
@@ -64,7 +68,7 @@ public class TerritoryDesignerController {
         switch (getSelectedAction()){
             case PLACE_DINO -> {
                 try{
-                    territory.placeDino(row, col);
+                    game.getTerritory().placeDino(row, col);
                     notifier.post(placeItemOnText("Dino", row, col));
                 }catch(DinoTerritoryException e){
                     notifier.post(e.getMessage());
@@ -72,7 +76,7 @@ public class TerritoryDesignerController {
             }
             case PLACE_BONE -> {
                 try{
-                    territory.placeBone(row, col);
+                    game.getTerritory().placeBone(row, col);
                     notifier.post(placeItemOnText("Knochen", row, col));
                 }catch(DinoTerritoryException e){
                     notifier.post(e.getMessage());
@@ -80,14 +84,14 @@ public class TerritoryDesignerController {
             }
             case PLACE_ROCK -> {
                 try{
-                    territory.placeRock(row, col);
+                    game.getTerritory().placeRock(row, col);
                     notifier.post(placeItemOnText("Felsen", row, col));
                 }catch(DinoTerritoryException e){
                     notifier.post(e.getMessage());
                 }
             }
             case DELETE -> {
-                territory.removeItem(row, col);
+                game.getTerritory().removeItem(row, col);
                 notifier.post("Feld ("+row+"|"+col+") wurde gelöscht.");
             }
             case NONE -> {//if none is selected, nothing has to be done
@@ -107,7 +111,7 @@ public class TerritoryDesignerController {
             notifier.post("Dino außerhalb des Territoriums.");
         }else {
             notifier.post("Ziehe den Dino auf ein beliebiges Feld, auf dem kein Felsen steht.");
-            pane.drawDino(x - ((double) pane.getSize() / 2), y - ((double) pane.getSize() / 2), territory.getDino().getOrientation());
+            pane.drawDino(x - ((double) pane.getSize() / 2), y - ((double) pane.getSize() / 2), game.getTerritory().getDino().getOrientation());
         }
     }
 
@@ -122,21 +126,31 @@ public class TerritoryDesignerController {
         draggingDino = false;
         if(isNotInsideTerritory(x,y)){
             notifier.post("Hier kann der Dino nicht platziert werden.");
-            territory.onTerritoryChange();
+            game.getTerritory().onTerritoryChange();
             return;
         }
         int row = (int) (y-pane.getBorderSize())/pane.getSize();
         int col = (int) (x-pane.getBorderSize())/pane.getSize();
-        if(!territory.isRock(row, col)){
-            territory.placeDino(row,col);
+        if(!game.getTerritory().isRock(row, col)){
+            game.getTerritory().placeDino(row,col);
         }else{
             notifier.post("Felsen im Weg!");
         }
-        territory.onTerritoryChange();
+        game.getTerritory().onTerritoryChange();
+    }
+
+    private void contextMenuRequest(ContextMenuEvent event){
+        double dinoXMin = (double) pane.getBorderSize() + game.getTerritory().getDino().getCol()*pane.getSize();
+        double dinoYMin = (double) pane.getBorderSize() + game.getTerritory().getDino().getRow()*pane.getSize();
+        if(event.getX() > dinoXMin && event.getX() < (dinoXMin + pane.getSize()) && event.getY() > dinoYMin && event.getY() < (dinoYMin + pane.getSize())){
+            DinoContextMenu contextMenu = new DinoContextMenu(game);
+            contextMenu.show(pane.getScene().getWindow(), event.getScreenX(), event.getScreenY());
+            //todo fix this
+        }
     }
 
     private boolean isNotInsideTerritory(double x, double y){
-        return (x<pane.getBorderSize() || y < pane.getBorderSize() || x > pane.getBorderSize() + territory.getNumberOfCols()*pane.getSize() || y > pane.getBorderSize() + territory.getNumberOfRows()*pane.getSize());
+        return (x<pane.getBorderSize() || y < pane.getBorderSize() || x > pane.getBorderSize() + game.getTerritory().getNumberOfCols()*pane.getSize() || y > pane.getBorderSize() + game.getTerritory().getNumberOfRows()*pane.getSize());
     }
 
     public void setSelectedAction(Selection selectedAction){
@@ -168,7 +182,7 @@ public class TerritoryDesignerController {
     }
 
     private void addActionsToMenuItems(){
-        stage.getChangeSizeMenuItem().setOnAction(_ -> new ResizeTerritoryDialog(territory, notifier));
+        stage.getChangeSizeMenuItem().setOnAction(_ -> new ResizeTerritoryDialog(game.getTerritory(), notifier));
 
         stage.getPlaceDinoCheckMenuItem().setOnAction(_ -> selectAction(Selection.PLACE_DINO));
         stage.getPlaceBoneCheckMenuItem().setOnAction(_ -> selectAction(Selection.PLACE_BONE));
@@ -177,7 +191,7 @@ public class TerritoryDesignerController {
     }
 
     private void addActionsToButtons(){
-        stage.getAdjustSizeButton().setOnAction(_ -> new ResizeTerritoryDialog(territory, notifier));
+        stage.getAdjustSizeButton().setOnAction(_ -> new ResizeTerritoryDialog(game.getTerritory(), notifier));
 
         stage.getPlaceDinoButton().setOnAction(_ -> selectAction(Selection.PLACE_DINO));
         stage.getPlaceBoneButton().setOnAction(_ -> selectAction(Selection.PLACE_BONE));

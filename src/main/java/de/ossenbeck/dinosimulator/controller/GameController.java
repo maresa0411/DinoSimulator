@@ -1,5 +1,6 @@
 package de.ossenbeck.dinosimulator.controller;
 
+import de.ossenbeck.dinosimulator.model.DinoSimulatorGame;
 import de.ossenbeck.dinosimulator.model.Program;
 import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.Notifier;
@@ -26,16 +27,7 @@ public class GameController {
      * @param title Name of the Game
      */
     public static void newDinoSimulatorGame(String title){
-        OPENED_PROGRAMS.add(title);
-        Territory territory = new Territory();
-        DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
-        DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
-        stageView.setTitle(title);
-        Notifier notifier = stageView.getNotifier();
-        new TerritoryDesignerController(territory, stageView, paneView, notifier);
-        new DinoChangeControlller(territory, stageView, notifier);
-        new StageController(stageView);
-        new CompileController(stageView);
+        DinoSimulatorStageView stageView = initialize(title);
         stageView.show();
     }
 
@@ -44,16 +36,7 @@ public class GameController {
      */
     public static void openDefault(){
         if(!isOpened(DEFAULT_NAME)){
-            OPENED_PROGRAMS.add(DEFAULT_NAME);
-            Territory territory = new Territory();
-            DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
-            DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
-            stageView.setTitle(DEFAULT_NAME);
-            Notifier notifier = stageView.getNotifier();
-            new TerritoryDesignerController(territory, stageView, paneView, notifier);
-            new DinoChangeControlller(territory, stageView, notifier);
-            new StageController(stageView);
-            new CompileController(stageView);
+            DinoSimulatorStageView stageView = initialize(DEFAULT_NAME);
             if(Files.exists(DEFAULT_DINO_FILE)){
                 String code = SaveLoadController.readFile(DEFAULT_DINO_FILE);
                 stageView.getTextArea().setText(code);
@@ -79,19 +62,24 @@ public class GameController {
 
     public static void loadDinoSimulatorGame(Program program){
         if(!isOpened(program.getTitle())) {
-            OPENED_PROGRAMS.add(program.getTitle());
-            Territory territory = new Territory();
-            DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
-            DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
-            stageView.setTitle(program.getTitle());
+            DinoSimulatorStageView stageView = initialize(program.getTitle());
             stageView.getTextArea().setText(program.getCode());
-            Notifier notifier = stageView.getNotifier();
-            new TerritoryDesignerController(territory, stageView, paneView, notifier);
-            new DinoChangeControlller(territory, stageView, notifier);
-            new StageController(stageView);
-            new CompileController(stageView);
             stageView.show();
         }
+    }
+
+    private static DinoSimulatorStageView initialize(String title){
+        OPENED_PROGRAMS.add(title);
+        DinoSimulatorGame game = new DinoSimulatorGame();
+        DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(game);
+        DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
+        stageView.setTitle(title);
+        Notifier notifier = stageView.getNotifier();
+        CompileController compileController = new CompileController(stageView, game);
+        new TerritoryDesignerController(game, stageView, paneView, notifier);
+        new DinoChangeControlller(game, stageView, notifier);
+        new StageController(stageView, compileController);
+        return stageView;
     }
 
     public static boolean isOpened(String title){
