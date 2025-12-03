@@ -61,6 +61,19 @@ public class Dino {
         territory.onTerritoryChange();
     }
 
+    protected boolean canMoveForward(){
+        int nextRow = row;
+        int nextCol = col;
+        switch (orientation){
+            case EAST -> nextCol++;
+            case SOUTH -> nextRow++;
+            case WEST -> nextCol--;
+            case NORTH -> nextRow--;
+        }
+        return nextRow < territory.getNumberOfRows() && nextCol < territory.getNumberOfCols() && nextCol >= 0 && nextRow >= 0 && !territory.isRock(nextRow, nextCol);
+
+    }
+
     /**
      * Makes the dino pick up a bone, if possible.
      * @throws MouthFullException when the maximum amount of bones {@code MAX_BONES} the dino can carry is reached.

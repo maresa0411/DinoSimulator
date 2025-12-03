@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SaveLoadController {
-    public static final String PROGRAMS_PATH = "src" + File.separator + "main" + File.separator + "java" + File.separator + "programs";
-    private static final String PREFIX_1 = "package programs;" + System.lineSeparator() + "public class ";
+    public static final String PROGRAMS_PATH = "programs";
+    private static final String PREFIX_1 = "public class ";
     private static final String PREFIX_2 = " extends de.ossenbeck.dinosimulator.model.Dino { public" ;
     private static final String POSTFIX = " }";
     public static final String FILENAME_END = ".java";
@@ -64,7 +65,7 @@ public class SaveLoadController {
      * Opens a file chooser and opens a new window with the selected file
      * @return chosen program
      */
-    public static Program load(){
+    public static Pair<String, String> load(){
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(PROGRAMS_PATH));
         fileChooser.setTitle("Wähle eine Datei");
@@ -75,7 +76,7 @@ public class SaveLoadController {
         String filename = selectedFile.toString().substring(selectedFile.toString().lastIndexOf(File.separator) + 1, selectedFile.toString().indexOf(FILENAME_END));
         try {
             Path path = selectedFile.toPath();
-            return new Program(filename, readFile(path));
+            return new Pair<>(filename, readFile(path));
 
         } catch (Exception _) {
             return null;
@@ -117,5 +118,14 @@ public class SaveLoadController {
         }catch(IOException _){
             return null;
         }
+    }
+
+    public static boolean saveAllFiles(){
+        for(Program p : GameController.OPENED_PROGRAMS.values()){
+            if(!save(p.getCode(), p.getTitle())){
+                return false;
+            }
+        }
+        return true;
     }
 }

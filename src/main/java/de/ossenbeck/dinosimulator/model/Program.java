@@ -1,19 +1,19 @@
 package de.ossenbeck.dinosimulator.model;
 
-public class Program {
-    private String title;
-    private String code;
+import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
 
-    public Program(String title, String code){
-        this.title = title;
-        this.code = code;
+public class Program {
+    private DinoSimulatorStageView stage;
+
+    public Program(DinoSimulatorStageView stage) {
+        this.stage = stage;
     }
 
     public String getTitle() {
-        return title;
+        return stage.getTitle();
     }
 
     public String getCode() {
-        return code;
+        return stage.getTextArea().getText();
     }
 }

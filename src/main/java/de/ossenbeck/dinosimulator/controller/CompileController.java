@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Objects;
 
 public class CompileController {
     private final DinoSimulatorStageView stage;
@@ -39,22 +40,24 @@ public class CompileController {
         if (javac == null){
             return "Kein Java-Compiler gefunden";
         }
+        String file = SaveLoadController.PROGRAMS_PATH + File.separator + filename + SaveLoadController.FILENAME_END;
         ByteArrayOutputStream err = new ByteArrayOutputStream();
-        boolean success = javac.run(null, null, err, filename) == 0;
+        boolean success = javac.run(null, null, err, file) == 0;
         if (!success) {
             return err.toString();
         }
         Dino newDino = loadClass(filename);
-        if(newDino != null){
-            game.getTerritory().setDino(newDino);
-        }else{
-            game.getTerritory().setDino(new Dino(game.getTerritory(), 0, 0));
-        }
+        game.getTerritory().setDino(Objects.requireNonNullElseGet(newDino, () -> new Dino(game.getTerritory(), 0, 0)));
         return null;
     }
 
-    private Dino loadClass(String filename){
-        try (URLClassLoader classLoader = new URLClassLoader(new URL[] { new File(".").toURI().toURL() })) {
+    /**
+     * Loads the given file as dino
+     * @param filename Class to be loaded
+     * @return Returns loaded class extending dino
+     */
+    private Dino loadClass(String filename) {
+        try (URLClassLoader classLoader = new URLClassLoader(new URL[] { new File(SaveLoadController.PROGRAMS_PATH).toURI().toURL() })) {
             return (Dino) classLoader.loadClass(filename).getConstructor().newInstance();
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -78,6 +81,8 @@ public class CompileController {
         return null;
     }
 
+
+
     /**
      * Compiles currently opened file,
      * shows alert with errors if compiling was not successful,
@@ -85,7 +90,7 @@ public class CompileController {
      */
     void compileFile(){
         SaveLoadController.save(stage.getTextArea().getText(), stage.getTitle());
-        String err = compile(SaveLoadController.PROGRAMS_PATH + File.separator + stage.getTitle() + SaveLoadController.FILENAME_END);
+        String err = compile(stage.getTitle());
         if(err != null){
             Alert alert = new Alert(Alert.AlertType.ERROR, err, ButtonType.OK);
             alert.showAndWait();

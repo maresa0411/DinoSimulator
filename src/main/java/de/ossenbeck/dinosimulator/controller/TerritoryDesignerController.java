@@ -145,7 +145,6 @@ public class TerritoryDesignerController {
         if(event.getX() > dinoXMin && event.getX() < (dinoXMin + pane.getSize()) && event.getY() > dinoYMin && event.getY() < (dinoYMin + pane.getSize())){
             DinoContextMenu contextMenu = new DinoContextMenu(game);
             contextMenu.show(pane.getScene().getWindow(), event.getScreenX(), event.getScreenY());
-            //todo fix this
         }
     }
 
