@@ -259,4 +259,15 @@ public class Territory {
     public int getMaxBones(){
         return MAX_BONES;
     }
+
+    public void replaceDino(Dino newDino){
+        if(newDino == null){
+            newDino = new Dino();
+        }
+        newDino.setPosition(dino.getRow(), dino.getCol());
+        newDino.setAmountOfBones(dino.getAmountOfBones());
+        newDino.setOrientation(dino.getOrientation());
+        newDino.setTerritory(this);
+        dino = newDino;
+    }
 }

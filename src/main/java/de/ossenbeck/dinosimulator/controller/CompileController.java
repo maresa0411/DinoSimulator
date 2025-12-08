@@ -47,7 +47,7 @@ public class CompileController {
             return err.toString();
         }
         Dino newDino = loadClass(filename);
-        game.getTerritory().setDino(Objects.requireNonNullElseGet(newDino, () -> new Dino(game.getTerritory(), 0, 0)));
+        game.getTerritory().replaceDino(newDino);
         return null;
     }
 

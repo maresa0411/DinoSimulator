@@ -1,5 +1,6 @@
 package de.ossenbeck.dinosimulator.controller;
 
+import de.ossenbeck.dinosimulator.model.Dino;
 import de.ossenbeck.dinosimulator.model.DinoSimulatorGame;
 import de.ossenbeck.dinosimulator.model.Program;
 import de.ossenbeck.dinosimulator.util.Notifier;
@@ -86,7 +87,9 @@ public class GameController {
         new StageController(stageView);
         stageView.getTextArea().setText(code);
         OPENED_PROGRAMS.put(title, new Program(stageView));
-        compileController.compile(title);
+        if(compileController.compile(title) != null){
+            game.getTerritory().setDino(new Dino(game.getTerritory(), 0, 0));
+        }
         stageView.show();
     }
 

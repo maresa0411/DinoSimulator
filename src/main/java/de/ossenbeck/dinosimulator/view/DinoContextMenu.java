@@ -2,6 +2,7 @@ package de.ossenbeck.dinosimulator.view;
 
 import de.ossenbeck.dinosimulator.model.Dino;
 import de.ossenbeck.dinosimulator.model.DinoSimulatorGame;
+import de.ossenbeck.dinosimulator.model.DinoTerritoryException;
 import de.ossenbeck.dinosimulator.util.Invisible;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -36,8 +37,12 @@ public class DinoContextMenu extends ContextMenu {
                 try {
                     method.invoke(game.getTerritory().getDino());
                     game.getTerritory().onTerritoryChange();
-                } catch (IllegalAccessException | InvocationTargetException ex) {
+                } catch (IllegalAccessException  _) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler", ButtonType.OK);
+                    alert.showAndWait();
+                } catch(InvocationTargetException e){
+                    String message = (e.getCause().getMessage() != null)? e.getCause().getMessage(): "Fehler";
+                    Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
                     alert.showAndWait();
                 }
             });
@@ -54,6 +59,13 @@ public class DinoContextMenu extends ContextMenu {
             }
         }
 
+        for(Method method : Dino.class.getDeclaredMethods()){
+            if(!Modifier.isPrivate(method.getModifiers()) && !Modifier.isStatic(method.getModifiers()) && !Modifier.isAbstract(method.getModifiers()) && method.getAnnotation(Invisible.class) == null && !methods.contains(method)) {
+                methods.add(method);
+                method.setAccessible(true);
+            }
+
+        }
         return methods;
     }
 }
