@@ -6,12 +6,12 @@ import de.ossenbeck.dinosimulator.util.Notifier;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
 
 public class DinoChangeControlller {
-    private final DinoSimulatorGame game;
+    private final Territory territory;
     private final DinoSimulatorStageView stage;
     private final Notifier notifier;
 
-    public DinoChangeControlller(DinoSimulatorGame game, DinoSimulatorStageView stage, Notifier notifier){
-        this.game = game;
+    public DinoChangeControlller(Territory territory, DinoSimulatorStageView stage, Notifier notifier){
+        this.territory = territory;
         this.stage = stage;
         this.notifier = notifier;
         addActionsToMenuItems();
@@ -20,29 +20,29 @@ public class DinoChangeControlller {
 
     private void addActionsToMenuItems(){
         stage.getTurnLeftMenuItem().setOnAction(_-> {
-            game.getTerritory().getDino().turnLeft();
+            territory.getDino().turnLeft();
             printAction(Action.TURN_LEFT);
         });
         stage.getForwardMenuItem().setOnAction(_-> {
             try{
-                game.getTerritory().getDino().moveForward();
+                territory.getDino().moveForward();
                 printAction(Action.MOVE_FORWARD);
             }catch(DinoTerritoryException e){
                 notifier.post(e.getMessage());
             }
         });
 
-        stage.getAdjustAmountOfBonesMenuItem().setOnAction(_ -> new ChangeAmountOfBonesDialog(game.getTerritory(), notifier));
+        stage.getAdjustAmountOfBonesMenuItem().setOnAction(_ -> new ChangeAmountOfBonesDialog(territory, notifier));
     }
 
     private void addActionsToButtons(){
         stage.getTurnLeftButton().setOnAction(_-> {
-            game.getTerritory().getDino().turnLeft();
+            territory.getDino().turnLeft();
             printAction(Action.TURN_LEFT);
         });
         stage.getMoveForwardButton().setOnAction(_-> {
             try{
-                game.getTerritory().getDino().moveForward();
+                territory.getDino().moveForward();
                 printAction(Action.MOVE_FORWARD);
             }catch(DinoTerritoryException e){
                 notifier.post(e.getMessage());
@@ -50,7 +50,7 @@ public class DinoChangeControlller {
         });
         stage.getPickUpBoneButton().setOnAction(_-> {
             try{
-                game.getTerritory().getDino().pickUpBone();
+                territory.getDino().pickUpBone();
                 printAction(Action.PICK_UP_BONE);
             }catch(DinoTerritoryException e){
                 notifier.post(e.getMessage());
@@ -58,14 +58,14 @@ public class DinoChangeControlller {
         });
         stage.getPutDownBoneButton().setOnAction(_-> {
             try{
-                game.getTerritory().getDino().putDownBone();
+                territory.getDino().putDownBone();
                 printAction(Action.PUT_DOWN_BONE);
             }catch(DinoTerritoryException e){
                 notifier.post(e.getMessage());
             }
         });
 
-        stage.getAdjustAmountOfBonesButton().setOnAction(_-> new ChangeAmountOfBonesDialog(game.getTerritory(), notifier));
+        stage.getAdjustAmountOfBonesButton().setOnAction(_-> new ChangeAmountOfBonesDialog(territory, notifier));
 
     }
 

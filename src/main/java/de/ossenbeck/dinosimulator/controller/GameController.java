@@ -1,8 +1,8 @@
 package de.ossenbeck.dinosimulator.controller;
 
 import de.ossenbeck.dinosimulator.model.Dino;
-import de.ossenbeck.dinosimulator.model.DinoSimulatorGame;
 import de.ossenbeck.dinosimulator.model.Program;
+import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.Notifier;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorPaneView;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
@@ -76,19 +76,19 @@ public class GameController {
     }
 
     private static void initialize(String title, String code){
-        DinoSimulatorGame game = new DinoSimulatorGame();
-        DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(game);
+        Territory territory = new Territory();
+        DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
         DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
         stageView.setTitle(title);
         Notifier notifier = stageView.getNotifier();
-        CompileController compileController = new CompileController(stageView, game);
-        new TerritoryDesignerController(game, stageView, paneView, notifier);
-        new DinoChangeControlller(game, stageView, notifier);
+        CompileController compileController = new CompileController(stageView, territory);
+        new TerritoryDesignerController(territory, stageView, paneView, notifier);
+        new DinoChangeControlller(territory, stageView, notifier);
         new StageController(stageView);
         stageView.getTextArea().setText(code);
         OPENED_PROGRAMS.put(title, new Program(stageView));
         if(compileController.compile(title) != null){
-            game.getTerritory().setDino(new Dino(game.getTerritory(), 0, 0));
+            territory.setDino(new Dino(territory, 0, 0));
         }
         stageView.show();
     }

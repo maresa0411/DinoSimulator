@@ -1,8 +1,7 @@
 package de.ossenbeck.dinosimulator.view;
 
 import de.ossenbeck.dinosimulator.model.Dino;
-import de.ossenbeck.dinosimulator.model.DinoSimulatorGame;
-import de.ossenbeck.dinosimulator.model.DinoTerritoryException;
+import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.Invisible;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -17,8 +16,8 @@ import java.util.List;
 
 public class DinoContextMenu extends ContextMenu {
 
-    public DinoContextMenu(final DinoSimulatorGame game){
-        List<Method> methods = getMethods(game.getTerritory().getDino());
+    public DinoContextMenu(final Territory territory){
+        List<Method> methods = getMethods(territory.getDino());
         for(Method method : methods){
             StringBuilder parameters = new StringBuilder();
             for(int i=0; i<method.getParameterCount(); i++){
@@ -35,8 +34,7 @@ public class DinoContextMenu extends ContextMenu {
             this.getItems().add(menuItem);
             menuItem.setOnAction(_ -> {
                 try {
-                    method.invoke(game.getTerritory().getDino());
-                    game.getTerritory().onTerritoryChange();
+                    method.invoke(territory.getDino());
                 } catch (IllegalAccessException  _) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler", ButtonType.OK);
                     alert.showAndWait();

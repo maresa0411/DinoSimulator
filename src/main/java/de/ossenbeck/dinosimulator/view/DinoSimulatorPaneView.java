@@ -1,12 +1,11 @@
 package de.ossenbeck.dinosimulator.view;
-import de.ossenbeck.dinosimulator.model.DinoSimulatorGame;
 import de.ossenbeck.dinosimulator.model.Orientation;
+import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.DinoDragListener;
 import de.ossenbeck.dinosimulator.util.TerritoryChangeListener;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
@@ -25,7 +24,7 @@ public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeL
     private static final Image rockImage;
     private static final Image boneImage;
 
-    private final DinoSimulatorGame game;
+    private final Territory territory;
 
     static{
         dinoImageEast = new Image("Trex.png");
@@ -36,20 +35,20 @@ public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeL
         boneImage = new Image("Bone.png");
     }
 
-    public DinoSimulatorPaneView(DinoSimulatorGame game){
-        this.game = game;
+    public DinoSimulatorPaneView(Territory territory){
+        this.territory = territory;
         canvas = new Canvas(calcWidth(), calcHeight());
         printBoard(false);
         this.getChildren().add(canvas);
-        game.getTerritory().addListener(this);
+        territory.addListener(this);
     }
 
     private int calcWidth(){
-        return (2*BORDER_SIZE + game.getTerritory().getNumberOfCols() * SIZE);
+        return (2*BORDER_SIZE + territory.getNumberOfCols() * SIZE);
     }
 
     private int calcHeight(){
-        return (2*BORDER_SIZE + game.getTerritory().getNumberOfRows() * SIZE);
+        return (2*BORDER_SIZE + territory.getNumberOfRows() * SIZE);
     }
 
     private void printBoard(boolean draggingDino){
@@ -59,15 +58,15 @@ public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeL
         canvas.setHeight(calcHeight());
         gc.setFill(TERRITORY_COLOR);
 
-        for(int r=0; r<game.getTerritory().getNumberOfRows(); r++){
-            for(int c=0; c<game.getTerritory().getNumberOfCols(); c++){
+        for(int r=0; r<territory.getNumberOfRows(); r++){
+            for(int c=0; c<territory.getNumberOfCols(); c++){
                 gc.fillRect(BORDER_SIZE + (double)c* SIZE, BORDER_SIZE + (double)r* SIZE, SIZE, SIZE);
-                if(game.getTerritory().isDinoAt(r, c) && !draggingDino){
-                    drawDino(BORDER_SIZE+(double)c*SIZE, BORDER_SIZE+(double)r*SIZE, game.getTerritory().getDino().getOrientation());
-                } else if (game.getTerritory().isRock(r,c)) {
+                if(territory.isDinoAt(r, c) && !draggingDino){
+                    drawDino(BORDER_SIZE+(double)c*SIZE, BORDER_SIZE+(double)r*SIZE, territory.getDino().getOrientation());
+                } else if (territory.isRock(r,c)) {
                     gc.drawImage(rockImage,BORDER_SIZE+(double)c*SIZE, BORDER_SIZE+ (double)r*SIZE, SIZE, SIZE);
-                } else if (game.getTerritory().getBones(r,c) > 0) {
-                    int bones = game.getTerritory().getBones(r, c);
+                } else if (territory.getBones(r,c) > 0) {
+                    int bones = territory.getBones(r, c);
                     for(int i=0; i< bones; i++){
                         gc.drawImage(boneImage, BORDER_SIZE+c*SIZE + (double)i%3 * BONE_SIZE, BORDER_SIZE+r*SIZE + Math.floor((double)i/3) * BONE_SIZE, BONE_SIZE, BONE_SIZE);
                     }
@@ -76,11 +75,11 @@ public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeL
         }
         gc.setLineWidth(2.0);
 
-        for(int rows = 0; rows <= game.getTerritory().getNumberOfRows(); rows++){
-            gc.strokeLine(BORDER_SIZE, BORDER_SIZE + (double) rows*SIZE, BORDER_SIZE+ (double) game.getTerritory().getNumberOfCols()*SIZE, BORDER_SIZE+ (double) rows*SIZE);
+        for(int rows = 0; rows <= territory.getNumberOfRows(); rows++){
+            gc.strokeLine(BORDER_SIZE, BORDER_SIZE + (double) rows*SIZE, BORDER_SIZE+ (double) territory.getNumberOfCols()*SIZE, BORDER_SIZE+ (double) rows*SIZE);
         }
-        for(int cols = 0; cols <= game.getTerritory().getNumberOfCols(); cols++){
-            gc.strokeLine(BORDER_SIZE + (double) cols*SIZE, BORDER_SIZE, BORDER_SIZE+ (double) cols*SIZE, BORDER_SIZE+ (double) game.getTerritory().getNumberOfRows()*SIZE);
+        for(int cols = 0; cols <= territory.getNumberOfCols(); cols++){
+            gc.strokeLine(BORDER_SIZE + (double) cols*SIZE, BORDER_SIZE, BORDER_SIZE+ (double) cols*SIZE, BORDER_SIZE+ (double) territory.getNumberOfRows()*SIZE);
         }
 
     }

@@ -1,7 +1,7 @@
 package de.ossenbeck.dinosimulator.controller;
 
 import de.ossenbeck.dinosimulator.model.Dino;
-import de.ossenbeck.dinosimulator.model.DinoSimulatorGame;
+import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -15,15 +15,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Objects;
 
 public class CompileController {
     private final DinoSimulatorStageView stage;
-    private final DinoSimulatorGame game;
+    private final Territory territory;
 
-    public CompileController(DinoSimulatorStageView stage, DinoSimulatorGame game){
+    public CompileController(DinoSimulatorStageView stage, Territory territory){
         this.stage = stage;
-        this.game = game;
+        this.territory = territory;
         stage.getCompileMenuItem().setOnAction(_ -> compileFile());
         stage.getCompileButton().setOnAction(_ -> compileFile());
     }
@@ -47,7 +46,7 @@ public class CompileController {
             return err.toString();
         }
         Dino newDino = loadClass(filename);
-        game.getTerritory().replaceDino(newDino);
+        territory.replaceDino(newDino);
         return null;
     }
 
