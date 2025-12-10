@@ -9,6 +9,7 @@ import de.ossenbeck.dinosimulator.view.DinoSimulatorPaneView;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
@@ -142,8 +143,13 @@ public class TerritoryDesignerController {
     private void contextMenuRequest(ContextMenuEvent event){
         double dinoXMin = (double) pane.getBorderSize() + territory.getDino().getCol()*pane.getSize();
         double dinoYMin = (double) pane.getBorderSize() + territory.getDino().getRow()*pane.getSize();
-        //todo Funktion für andere Größen des Screens fixen
-        if(event.getSceneX() > dinoXMin && event.getSceneX() < (dinoXMin + pane.getSize()) && event.getSceneY() > dinoYMin && event.getSceneY() < (dinoYMin + pane.getSize())){
+
+        //generated with ChatGPT at 10.12.2025
+        Point2D canvasPoint = pane.getCanvas().screenToLocal(event.getScreenX(), event.getScreenY());
+        double x = canvasPoint.getX();
+        double y = canvasPoint.getY();
+
+        if(x > dinoXMin && x < (dinoXMin + pane.getSize()) && y > dinoYMin && y < (dinoYMin + pane.getSize())){
             DinoContextMenu contextMenu = new DinoContextMenu(territory);
             contextMenu.show(pane.getScene().getWindow(), event.getScreenX(), event.getScreenY());
         }
