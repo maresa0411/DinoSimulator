@@ -467,9 +467,7 @@ public class DinoSimulatorStageView extends Stage {
         return slider;
     }
 
-    public TextArea getTextArea() {
-        return textArea;
-    }
+    public TextArea getTextArea() {return textArea;}
 
     public Notifier getNotifier(){
         return notifier;

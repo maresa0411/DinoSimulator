@@ -31,6 +31,22 @@ public class DinoChangeControlller {
                 notifier.post(e.getMessage());
             }
         });
+        stage.getPickUpBoneMenuItem().setOnAction(_-> {
+            try{
+                territory.getDino().pickUpBone();
+                printAction(Action.PICK_UP_BONE);
+            }catch(DinoTerritoryException e){
+                notifier.post(e.getMessage());
+            }
+        });
+        stage.getPutDownBoneMenuItem().setOnAction(_ -> {
+            try{
+                territory.getDino().putDownBone();
+                printAction(Action.PUT_DOWN_BONE);
+            }catch(DinoTerritoryException e){
+                notifier.post(e.getMessage());
+            }
+        });
 
         stage.getAdjustAmountOfBonesMenuItem().setOnAction(_ -> new ChangeAmountOfBonesDialog(territory, notifier));
     }

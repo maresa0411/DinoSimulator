@@ -37,11 +37,13 @@ public class Dino {
      * @throws EndOfTerritoryException when the end of the territory is reached.
      */
     public void moveForward() throws RockInTheWayException, EndOfTerritoryException{
-        switch (orientation){
-            case EAST -> moveForwardHelp(row, col+1);
-            case SOUTH -> moveForwardHelp(row+1, col);
-            case WEST -> moveForwardHelp(row, col-1);
-            case NORTH -> moveForwardHelp(row-1, col);
+        synchronized (this) {
+            switch (orientation) {
+                case EAST -> moveForwardHelp(row, col + 1);
+                case SOUTH -> moveForwardHelp(row + 1, col);
+                case WEST -> moveForwardHelp(row, col - 1);
+                case NORTH -> moveForwardHelp(row - 1, col);
+            }
         }
         territory.onTerritoryChange();
     }
@@ -59,7 +61,9 @@ public class Dino {
     }
 
     public void turnLeft(){
-        orientation = orientation.turnLeft();
+        synchronized (this) {
+            orientation = orientation.turnLeft();
+        }
         territory.onTerritoryChange();
     }
 
@@ -68,8 +72,8 @@ public class Dino {
      * @return if the dino can move forward
      */
     protected boolean canMoveForward(){
-        int nextRow = row;
-        int nextCol = col;
+        int nextRow = getRow();
+        int nextCol = getCol();
         switch (orientation){
             case EAST -> nextCol++;
             case SOUTH -> nextRow++;
@@ -80,12 +84,12 @@ public class Dino {
 
     }
 
-    protected boolean isMouthEmpty(){
+    protected synchronized boolean isMouthEmpty(){
         return amountOfBones == 0;
     }
 
     protected boolean boneThere(){
-        return territory.getBones(row, col) > 0;
+        return territory.getBones(getRow(), getCol()) > 0;
     }
 
     /**
@@ -94,17 +98,19 @@ public class Dino {
      * @throws NoBonesThereException when the selected tile does not contain any bones.
      */
     public void pickUpBone() throws MouthEmptyException, NoBonesThereException{
-        if(territory.getBones(row, col) > 0){
-            if(amountOfBones+1 < MAX_BONES){
-                amountOfBones++;
-                territory.removeBone(row, col);
-                territory.onTerritoryChange();
-            }else{
-                throw new MouthFullException();
+        synchronized (this) {
+            if (territory.getBones(row, col) > 0) {
+                if (amountOfBones + 1 < MAX_BONES) {
+                    amountOfBones++;
+                    territory.removeBone(row, col);
+                } else {
+                    throw new MouthFullException();
+                }
+            } else {
+                throw new NoBonesThereException();
             }
-        }else{
-            throw new NoBonesThereException();
         }
+        territory.onTerritoryChange();
     }
 
     /**
@@ -113,15 +119,17 @@ public class Dino {
      * @throws MouthEmptyException if the dino does not have any bones in its mouth.
      */
     public void putDownBone() throws TooManyBonesException, MouthEmptyException{
-        if (amountOfBones > 0) {
-            if(territory.getBones(row, col) < territory.getMaxBones()){
-                territory.placeBone(row, col);
-                amountOfBones--;
-            }else{
-                throw new TooManyBonesException();
+        synchronized (this) {
+            if (amountOfBones > 0) {
+                if (territory.getBones(row, col) < territory.getMaxBones()) {
+                    territory.placeBone(row, col);
+                    amountOfBones--;
+                } else {
+                    throw new TooManyBonesException();
+                }
+            } else {
+                throw new MouthEmptyException();
             }
-        }else{
-            throw new MouthEmptyException();
         }
         territory.onTerritoryChange();
     }
@@ -145,7 +153,7 @@ public class Dino {
      * @throws IllegalArgumentException when {@code row} < 0
      */
 
-    private void setRow(int row) throws IllegalArgumentException{
+    private synchronized void setRow(int row) throws IllegalArgumentException{
         if(row < 0){
             throw new IllegalArgumentException("Row must be >= 0");
         }
@@ -157,30 +165,30 @@ public class Dino {
      * @throws IllegalArgumentException when {@code col} < 0
      */
 
-    private void setCol(int col) throws IllegalArgumentException{
+    private synchronized void setCol(int col) throws IllegalArgumentException{
         if(col < 0){
             throw new IllegalArgumentException("Column must be >= 0");
         }
         this.col = col;
     }
     @Invisible
-    public void resetAmountOfBones(){
+    public synchronized void resetAmountOfBones(){
         amountOfBones = 0;
     }
     @Invisible
-    public int getRow(){
+    public synchronized int getRow(){
         return row;
     }
     @Invisible
-    public int getCol(){
+    public synchronized int getCol(){
         return col;
     }
     @Invisible
-    public Orientation getOrientation(){
+    public synchronized Orientation getOrientation(){
         return orientation;
     }
     @Invisible
-    public void setAmountOfBones(int amountOfBones){
+    public synchronized void setAmountOfBones(int amountOfBones){
         this.amountOfBones = amountOfBones;
     }
     @Invisible
@@ -188,15 +196,17 @@ public class Dino {
         return MAX_BONES;
     }
     @Invisible
-    public int getAmountOfBones(){
+    public synchronized int getAmountOfBones(){
         return amountOfBones;
     }
     @Invisible
-    public void setOrientation(Orientation orientation){
+    public synchronized void setOrientation(Orientation orientation){
         this.orientation = orientation;
     }
     @Invisible
-    public void setTerritory(Territory territory){
+    public synchronized void setTerritory(Territory territory){
         this.territory = territory;
     }
+    @Invisible
+    public void main() {}
 }

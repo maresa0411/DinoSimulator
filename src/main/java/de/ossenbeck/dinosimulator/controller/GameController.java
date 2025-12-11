@@ -6,6 +6,7 @@ import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.Notifier;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorPaneView;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
@@ -13,10 +14,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameController {
-    protected static final HashMap<String, Program> OPENED_PROGRAMS = new HashMap<>();
+    protected static final ConcurrentHashMap<String, Program> OPENED_PROGRAMS = new ConcurrentHashMap<>();
     private static final String DEFAULT_TEXT = "void main(){" +System.lineSeparator()+"}";
     private static final String DEFAULT_NAME = "DefaultDino";
     private static final Path DEFAULT_DINO_FILE = Path.of(SaveLoadController.PROGRAMS_PATH + File.separator + DEFAULT_NAME + SaveLoadController.FILENAME_END);
@@ -77,20 +78,24 @@ public class GameController {
 
     private static void initialize(String title, String code){
         Territory territory = new Territory();
+        territory.initTest();
         DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
         DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
-        stageView.setTitle(title);
         Notifier notifier = stageView.getNotifier();
-        CompileController compileController = new CompileController(stageView, territory);
+        SimulationController simulationController = new SimulationController(stageView, territory);
+        CompileController compileController = new CompileController(stageView, territory, simulationController);
         new TerritoryDesignerController(territory, stageView, paneView, notifier);
         new DinoChangeControlller(territory, stageView, notifier);
         new StageController(stageView);
-        stageView.getTextArea().setText(code);
         OPENED_PROGRAMS.put(title, new Program(stageView));
-        if(compileController.compile(title) != null){
-            territory.setDino(new Dino(territory, 0, 0));
-        }
-        stageView.show();
+        Platform.runLater(() -> {
+            stageView.setTitle(title);
+            stageView.getTextArea().setText(code);
+            if (compileController.compile(title) != null) {
+                territory.setDino(new Dino(territory, 0, 0));
+            }
+            stageView.show();
+        });
     }
 
     public static boolean isOpened(String title){

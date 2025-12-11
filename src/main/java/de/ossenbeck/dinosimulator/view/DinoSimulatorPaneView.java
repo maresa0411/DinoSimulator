@@ -3,6 +3,7 @@ import de.ossenbeck.dinosimulator.model.Orientation;
 import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.DinoDragListener;
 import de.ossenbeck.dinosimulator.util.TerritoryChangeListener;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -38,9 +39,9 @@ public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeL
     public DinoSimulatorPaneView(Territory territory){
         this.territory = territory;
         canvas = new Canvas(calcWidth(), calcHeight());
-        printBoard(false);
         this.getChildren().add(canvas);
         territory.addListener(this);
+        Platform.runLater(() -> printBoard(false));
     }
 
     private int calcWidth(){
@@ -108,11 +109,11 @@ public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeL
 
     @Override
     public void onTerritoryChanged() {
-        printBoard(false);
+        Platform.runLater(() -> printBoard(false));
     }
 
     @Override
     public void onDinoDrag() {
-        printBoard(true);
+        Platform.runLater(() -> printBoard(true));
     }
 }

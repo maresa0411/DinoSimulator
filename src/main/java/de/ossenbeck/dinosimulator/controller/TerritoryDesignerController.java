@@ -7,6 +7,7 @@ import de.ossenbeck.dinosimulator.util.Notifier;
 import de.ossenbeck.dinosimulator.view.DinoContextMenu;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorPaneView;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
@@ -112,7 +113,7 @@ public class TerritoryDesignerController {
             notifier.post("Dino außerhalb des Territoriums.");
         }else {
             notifier.post("Ziehe den Dino auf ein beliebiges Feld, auf dem kein Felsen steht.");
-            pane.drawDino(x - ((double) pane.getSize() / 2), y - ((double) pane.getSize() / 2), territory.getDino().getOrientation());
+            Platform.runLater(() -> pane.drawDino(x - ((double) pane.getSize() / 2), y - ((double) pane.getSize() / 2), territory.getDino().getOrientation()));
         }
     }
 

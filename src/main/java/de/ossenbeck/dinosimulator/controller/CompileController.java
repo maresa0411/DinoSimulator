@@ -19,10 +19,12 @@ import java.net.URLClassLoader;
 public class CompileController {
     private final DinoSimulatorStageView stage;
     private final Territory territory;
+    private final SimulationController simulationController;
 
-    public CompileController(DinoSimulatorStageView stage, Territory territory){
+    public CompileController(DinoSimulatorStageView stage, Territory territory, SimulationController simulationController){
         this.stage = stage;
         this.territory = territory;
+        this.simulationController = simulationController;
         stage.getCompileMenuItem().setOnAction(_ -> compileFile());
         stage.getCompileButton().setOnAction(_ -> compileFile());
     }
@@ -84,10 +86,12 @@ public class CompileController {
 
     /**
      * Compiles currently opened file,
+     * stops simulation if it is running,
      * shows alert with errors if compiling was not successful,
      * shows alert with information success if compiling was successful
      */
-    void compileFile(){
+    private void compileFile(){
+        simulationController.stopSimulation();
         SaveLoadController.save(stage.getTextArea().getText(), stage.getTitle());
         String err = compile(stage.getTitle());
         if(err != null){
