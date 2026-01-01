@@ -37,7 +37,7 @@ public class Dino {
      * @throws EndOfTerritoryException when the end of the territory is reached.
      */
     public void moveForward() throws RockInTheWayException, EndOfTerritoryException{
-        synchronized (this) {
+        synchronized (territory) {
             switch (orientation) {
                 case EAST -> moveForwardHelp(row, col + 1);
                 case SOUTH -> moveForwardHelp(row + 1, col);
@@ -61,7 +61,7 @@ public class Dino {
     }
 
     public void turnLeft(){
-        synchronized (this) {
+        synchronized (territory) {
             orientation = orientation.turnLeft();
         }
         territory.onTerritoryChange();
@@ -72,15 +72,17 @@ public class Dino {
      * @return if the dino can move forward
      */
     protected boolean canMoveForward(){
-        int nextRow = getRow();
-        int nextCol = getCol();
-        switch (orientation){
-            case EAST -> nextCol++;
-            case SOUTH -> nextRow++;
-            case WEST -> nextCol--;
-            case NORTH -> nextRow--;
+        synchronized (territory) {
+            int nextRow = getRow();
+            int nextCol = getCol();
+            switch (orientation) {
+                case EAST -> nextCol++;
+                case SOUTH -> nextRow++;
+                case WEST -> nextCol--;
+                case NORTH -> nextRow--;
+            }
+            return nextRow < territory.getNumberOfRows() && nextCol < territory.getNumberOfCols() && nextCol >= 0 && nextRow >= 0 && !territory.isRock(nextRow, nextCol);
         }
-        return nextRow < territory.getNumberOfRows() && nextCol < territory.getNumberOfCols() && nextCol >= 0 && nextRow >= 0 && !territory.isRock(nextRow, nextCol);
 
     }
 
@@ -89,7 +91,9 @@ public class Dino {
     }
 
     protected boolean boneThere(){
-        return territory.getBones(getRow(), getCol()) > 0;
+        synchronized (territory){
+            return territory.getBones(getRow(), getCol()) > 0;
+        }
     }
 
     /**
@@ -98,7 +102,7 @@ public class Dino {
      * @throws NoBonesThereException when the selected tile does not contain any bones.
      */
     public void pickUpBone() throws MouthEmptyException, NoBonesThereException{
-        synchronized (this) {
+        synchronized (territory) {
             if (territory.getBones(row, col) > 0) {
                 if (amountOfBones + 1 < MAX_BONES) {
                     amountOfBones++;
@@ -119,7 +123,7 @@ public class Dino {
      * @throws MouthEmptyException if the dino does not have any bones in its mouth.
      */
     public void putDownBone() throws TooManyBonesException, MouthEmptyException{
-        synchronized (this) {
+        synchronized (territory) {
             if (amountOfBones > 0) {
                 if (territory.getBones(row, col) < territory.getMaxBones()) {
                     territory.placeBone(row, col);
@@ -143,8 +147,10 @@ public class Dino {
      */
     @Invisible
     public void setPosition(int row, int col) throws IllegalArgumentException{
-        setRow(row);
-        setCol(col);
+        synchronized (territory) {
+            setRow(row);
+            setCol(col);
+        }
         territory.onTerritoryChange();
     }
 
@@ -153,8 +159,8 @@ public class Dino {
      * @throws IllegalArgumentException when {@code row} < 0
      */
 
-    private synchronized void setRow(int row) throws IllegalArgumentException{
-        if(row < 0){
+    private synchronized void setRow(int row) throws IllegalArgumentException {
+        if (row < 0) {
             throw new IllegalArgumentException("Row must be >= 0");
         }
         this.row = row;
@@ -166,7 +172,7 @@ public class Dino {
      */
 
     private synchronized void setCol(int col) throws IllegalArgumentException{
-        if(col < 0){
+        if (col < 0) {
             throw new IllegalArgumentException("Column must be >= 0");
         }
         this.col = col;

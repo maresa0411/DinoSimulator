@@ -41,7 +41,7 @@ public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeL
         canvas = new Canvas(calcWidth(), calcHeight());
         this.getChildren().add(canvas);
         territory.addListener(this);
-        Platform.runLater(() -> printBoard(false));
+        onTerritoryChanged();
     }
 
     private int calcWidth(){
@@ -109,11 +109,19 @@ public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeL
 
     @Override
     public void onTerritoryChanged() {
-        Platform.runLater(() -> printBoard(false));
+        if(Platform.isFxApplicationThread()){
+            printBoard(false);
+        }else {
+            Platform.runLater(() -> printBoard(false));
+        }
     }
 
     @Override
     public void onDinoDrag() {
-        Platform.runLater(() -> printBoard(true));
+        if(Platform.isFxApplicationThread()){
+            printBoard(true);
+        }else {
+            Platform.runLater(() -> printBoard(true));
+        }
     }
 }

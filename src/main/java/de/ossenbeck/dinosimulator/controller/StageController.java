@@ -11,11 +11,15 @@ import java.util.Optional;
 
 public class StageController {
     private final DinoSimulatorStageView stage;
-    public StageController(final DinoSimulatorStageView stage){
+    public StageController(final DinoSimulatorStageView stage, SimulationController simulationController){
         this.stage = stage;
         stage.getQuitMenuItem().setOnAction(_ -> closeAllWindows());
         stage.setOnCloseRequest(event -> {
-            if(!closeWindow()) event.consume();
+            if(!closeWindow()){
+                event.consume();
+            }else{
+                simulationController.stopSimulation();
+            }
         });
         stage.getNewButton().setOnAction(_ -> new NewGameDialog());
         stage.getNewMenuItem().setOnAction(_ -> new NewGameDialog());

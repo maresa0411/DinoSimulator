@@ -86,7 +86,7 @@ public class GameController {
         CompileController compileController = new CompileController(stageView, territory, simulationController);
         new TerritoryDesignerController(territory, stageView, paneView, notifier);
         new DinoChangeControlller(territory, stageView, notifier);
-        new StageController(stageView);
+        new StageController(stageView, simulationController);
         OPENED_PROGRAMS.put(title, new Program(stageView));
         Platform.runLater(() -> {
             stageView.setTitle(title);

@@ -1,13 +1,18 @@
 package de.ossenbeck.dinosimulator.controller;
 
+import de.ossenbeck.dinosimulator.model.Dino;
 import de.ossenbeck.dinosimulator.model.DinoTerritoryException;
 import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.util.TerritoryChangeListener;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class Simulation extends Thread implements TerritoryChangeListener {
     private Territory territory;
@@ -30,15 +35,21 @@ public class Simulation extends Thread implements TerritoryChangeListener {
 
     @Override
     public void run() {
+        Dino dino = territory.getDino();
         territory.addListener(this);
         try {
-            territory.getDino().main();
+            Method mainMethod = dino.getClass().getDeclaredMethod("main");
+            mainMethod.setAccessible(true);
+            mainMethod.invoke(dino);
         }
         catch(DinoTerritoryException _){
             errorSound.play();
         }
         catch (StoppedException _) {}
-        finally {
+        catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, e.getCause().getMessage(), ButtonType.OK);
+            Platform.runLater(alert::showAndWait);
+        } finally {
             territory.deleteListener(this);
             simulationController.simEnded();
         }
@@ -55,7 +66,7 @@ public class Simulation extends Thread implements TerritoryChangeListener {
         try {
             Thread.sleep(simulationController.getSpeed());
         } catch (InterruptedException _) {
-            interrupt();
+            throw new StoppedException();
         }
         while (pause) {
             synchronized (this) {

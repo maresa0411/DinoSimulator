@@ -234,7 +234,7 @@ public class Territory {
      * @param col Column (must be >= 0 and < numberOfCols).
      * @throws IllegalArgumentException when {@code row} or {@code col} < 0 or >= number of rows/columns.
      */
-    private void checkRowAndCol(int row, int col){
+    private synchronized void checkRowAndCol(int row, int col){
         if(territoryField == null){
             return;
         }

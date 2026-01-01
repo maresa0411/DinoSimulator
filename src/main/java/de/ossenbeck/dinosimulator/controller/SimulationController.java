@@ -52,7 +52,7 @@ public class SimulationController {
         stage.getPauseMenuItem().setDisable(false);
         stage.getStopButton().setDisable(false);
         stage.getStopDinoMenuItem().setDisable(false);
-
+        speed = (int) stage.getSlider().getValue();
         if(simulation == null){
             simulation = new Simulation(territory, this);
             simulation.setDaemon(true);
@@ -78,12 +78,12 @@ public class SimulationController {
         simulation.setStop(true);
         simulation.setPause(false);
         synchronized (simulation){
-            simulation.notify();
+            simulation.interrupt();
         }
     }
 
     public int getSpeed() {
-        return MAX_SPEED - speed;
+        return Math.max((MAX_SPEED - speed), MIN_SPEED);
     }
 
     public void simEnded(){
