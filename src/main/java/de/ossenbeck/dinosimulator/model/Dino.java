@@ -7,7 +7,7 @@ public class Dino {
     private int col;
     private int amountOfBones;
     private Orientation orientation;
-    private Territory territory;
+    private transient Territory territory;
     private static final int MAX_BONES = 100;
 
     public Dino(){

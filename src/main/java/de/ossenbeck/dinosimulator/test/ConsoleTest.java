@@ -22,7 +22,6 @@ public class ConsoleTest {
             printTerritory(territory);
         }else if(choice == 1){
             territory = new Territory();
-            territory.initTest();
             printTerritory(territory);
         }else{
             gameOn = false;

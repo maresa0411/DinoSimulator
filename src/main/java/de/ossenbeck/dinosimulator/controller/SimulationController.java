@@ -3,6 +3,8 @@ package de.ossenbeck.dinosimulator.controller;
 import de.ossenbeck.dinosimulator.model.Territory;
 import de.ossenbeck.dinosimulator.view.DinoSimulatorStageView;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Slider;
 
 public class SimulationController {
@@ -15,6 +17,7 @@ public class SimulationController {
     private static final int DEF_SPEED = 500;
 
     private volatile int speed = DEF_SPEED;
+    private final BooleanProperty simulationRunning;
 
     public SimulationController(DinoSimulatorStageView stage, Territory territory){
         this.stage = stage;
@@ -33,6 +36,7 @@ public class SimulationController {
         slider.setMin(MIN_SPEED);
         slider.setValue(speed);
         slider.valueProperty().addListener((_, _ , n) -> speed = n.intValue());
+        simulationRunning = new SimpleBooleanProperty(false);
     }
 
     private void pauseSimulation(){
@@ -43,6 +47,7 @@ public class SimulationController {
         stage.getStopButton().setDisable(false);
         stage.getStopDinoMenuItem().setDisable(false);
         simulation.setPause(true);
+        simulationRunning.setValue(false);
     }
 
     private void startOrContinueSimulation(){
@@ -53,6 +58,7 @@ public class SimulationController {
         stage.getStopButton().setDisable(false);
         stage.getStopDinoMenuItem().setDisable(false);
         speed = (int) stage.getSlider().getValue();
+        simulationRunning.setValue(true);
         if(simulation == null){
             simulation = new Simulation(territory, this);
             simulation.setDaemon(true);
@@ -77,6 +83,7 @@ public class SimulationController {
         stage.getStopDinoMenuItem().setDisable(true);
         simulation.setStop(true);
         simulation.setPause(false);
+        simulationRunning.setValue(false);
         synchronized (simulation){
             simulation.interrupt();
         }
@@ -96,5 +103,9 @@ public class SimulationController {
             stage.getStopDinoMenuItem().setDisable(true);
         });
         simulation = null;
-}
+    }
+
+    public BooleanProperty isSimulationRunning(){
+        return simulationRunning;
+    }
 }

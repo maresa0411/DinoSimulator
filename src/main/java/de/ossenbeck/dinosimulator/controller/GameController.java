@@ -78,12 +78,12 @@ public class GameController {
 
     private static void initialize(String title, String code){
         Territory territory = new Territory();
-        territory.initTest();
         DinoSimulatorPaneView paneView = new DinoSimulatorPaneView(territory);
         DinoSimulatorStageView stageView = new DinoSimulatorStageView(paneView);
         Notifier notifier = stageView.getNotifier();
         SimulationController simulationController = new SimulationController(stageView, territory);
         CompileController compileController = new CompileController(stageView, territory, simulationController);
+        new SerializationController(territory, stageView, simulationController);
         new TerritoryDesignerController(territory, stageView, paneView, notifier);
         new DinoChangeControlller(territory, stageView, notifier);
         new StageController(stageView, simulationController);

@@ -68,10 +68,8 @@ public class StageController {
         if(!SaveLoadController.saveAllFiles()){
             Alert alert = new Alert(Alert.AlertType.ERROR, "Das Speichern hat nicht geklappt!", ButtonType.OK, ButtonType.CANCEL);
             Optional<ButtonType> result = alert.showAndWait();
-            if(result.isPresent()){
-                if(!result.get().equals(ButtonType.OK)){
+            if(result.isPresent() && !result.get().equals(ButtonType.OK)){
                     return;
-                }
             }
         }
         GameController.endAllGames();

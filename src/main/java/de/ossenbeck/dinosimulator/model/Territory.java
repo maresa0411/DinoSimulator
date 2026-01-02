@@ -3,7 +3,6 @@ package de.ossenbeck.dinosimulator.model;
 import de.ossenbeck.dinosimulator.util.TerritoryChangeListener;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Territory {
@@ -13,8 +12,7 @@ public class Territory {
     private static final int ROCK = -1;
     private static final int EMPTY = 0;
     private static final int MAX_BONES = 9;
-    private final List<TerritoryChangeListener> listener;
-    private Random random = new Random();
+    private List<TerritoryChangeListener> listener;
 
     public Territory(){
         this(DEFAULT_SIZE, DEFAULT_SIZE);
@@ -39,6 +37,7 @@ public class Territory {
     public void setDino(Dino dino){
         synchronized (this){
             this.dino = dino;
+            dino.setTerritory(this);
         }
         onTerritoryChange();
     }
@@ -242,22 +241,6 @@ public class Territory {
             throw new IllegalArgumentException("Invalid position");
         }
     }
-
-    public void initTest(){
-        for(int i=0; i<8; i++) {
-            int row =random.nextInt(getNumberOfRows());
-            int col = random.nextInt(getNumberOfCols());
-            if(dino.getRow() != row && dino.getCol() != col) {placeRock(row, col);}
-        }
-        for(int i=0; i<30; i++) {
-            placeBone(random.nextInt(getNumberOfRows()), random.nextInt(getNumberOfCols()));
-        }
-        for(int i=0; i<random.nextInt(3); i++){
-            dino.turnLeft();
-        }
-        onTerritoryChange();
-    }
-
     public void addListener(TerritoryChangeListener listener){
         this.listener.add(listener);
     }
@@ -293,5 +276,14 @@ public class Territory {
 
     public void deleteListener(TerritoryChangeListener l) {
         listener.remove(l);
+    }
+
+    public synchronized int[][] getTerritoryField(){return territoryField;}
+
+    public void setTerritoryField(int[][] newTerritoryField){
+        synchronized (this) {
+            this.territoryField = newTerritoryField;
+        }
+        onTerritoryChange();
     }
 }
