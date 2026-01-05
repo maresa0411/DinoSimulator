@@ -43,11 +43,13 @@ public class SerializationController {
             file = new File(file.getAbsolutePath().concat(".ser"));
         }
         try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(file))) {
-            os.writeObject(territory.getTerritoryField());
-            os.writeInt(territory.getDino().getRow());
-            os.writeInt(territory.getDino().getCol());
-            os.writeInt(territory.getDino().getAmountOfBones());
-            os.writeObject(territory.getDino().getOrientation());
+            synchronized(territory){
+                os.writeObject(territory.getTerritoryField());
+                os.writeInt(territory.getDino().getRow());
+                os.writeInt(territory.getDino().getCol());
+                os.writeInt(territory.getDino().getAmountOfBones());
+                os.writeObject(territory.getDino().getOrientation());
+            }
         } catch (Exception exc) {
             exc.printStackTrace();
             Alert alert = new Alert(AlertType.ERROR, "Fehler beim Speichern!", ButtonType.OK);

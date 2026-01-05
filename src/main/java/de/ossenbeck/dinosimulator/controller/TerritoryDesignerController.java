@@ -23,17 +23,19 @@ public class TerritoryDesignerController {
     private final DinoSimulatorStageView stage;
     private final DinoSimulatorPaneView pane;
     private final Notifier notifier;
+    private final SimulationController simulationController;
 
     private final List<DinoDragListener> listener;
 
     private ObjectProperty<Selection> selectedAction;
     private boolean draggingDino;
 
-    public TerritoryDesignerController(Territory territory, DinoSimulatorStageView stage, DinoSimulatorPaneView pane, Notifier notifier){
+    public TerritoryDesignerController(Territory territory, DinoSimulatorStageView stage, DinoSimulatorPaneView pane, Notifier notifier, SimulationController simulationController){
         this.territory = territory;
         this.stage = stage;
         this.pane = pane;
         this.notifier = notifier;
+        this.simulationController = simulationController;
 
         listener = new ArrayList<>();
         listener.add(pane);
@@ -190,6 +192,7 @@ public class TerritoryDesignerController {
 
     private void addActionsToMenuItems(){
         stage.getChangeSizeMenuItem().setOnAction(_ -> new ResizeTerritoryDialog(territory, notifier));
+        stage.getChangeSizeMenuItem().disableProperty().bind(simulationController.isSimulationRunning());
 
         stage.getPlaceDinoCheckMenuItem().setOnAction(_ -> selectAction(Selection.PLACE_DINO));
         stage.getPlaceBoneCheckMenuItem().setOnAction(_ -> selectAction(Selection.PLACE_BONE));
@@ -199,6 +202,7 @@ public class TerritoryDesignerController {
 
     private void addActionsToButtons(){
         stage.getAdjustSizeButton().setOnAction(_ -> new ResizeTerritoryDialog(territory, notifier));
+        stage.getAdjustSizeButton().disableProperty().bind(simulationController.isSimulationRunning());
 
         stage.getPlaceDinoButton().setOnAction(_ -> selectAction(Selection.PLACE_DINO));
         stage.getPlaceBoneButton().setOnAction(_ -> selectAction(Selection.PLACE_BONE));

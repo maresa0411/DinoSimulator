@@ -84,7 +84,7 @@ public class GameController {
         SimulationController simulationController = new SimulationController(stageView, territory);
         CompileController compileController = new CompileController(stageView, territory, simulationController);
         new SerializationController(territory, stageView, simulationController);
-        new TerritoryDesignerController(territory, stageView, paneView, notifier);
+        new TerritoryDesignerController(territory, stageView, paneView, notifier, simulationController);
         new DinoChangeControlller(territory, stageView, notifier);
         new StageController(stageView, simulationController);
         OPENED_PROGRAMS.put(title, new Program(stageView));
