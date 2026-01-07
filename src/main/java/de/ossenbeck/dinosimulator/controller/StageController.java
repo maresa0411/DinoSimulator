@@ -38,6 +38,9 @@ public class StageController {
 
     private void loadProgram(){
         Pair<String, String> program = SaveLoadController.load();
+        if(program == null){
+            return;
+        }
         if (GameController.isOpened(program.getKey())){
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Programm is bereits geöffnet", ButtonType.OK);
             alert.showAndWait();
@@ -73,6 +76,7 @@ public class StageController {
             }
         }
         GameController.endAllGames();
+        DBSerializationController.shutdown();
         Platform.exit();
     }
 }

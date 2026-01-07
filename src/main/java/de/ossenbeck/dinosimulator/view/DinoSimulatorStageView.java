@@ -18,14 +18,12 @@ public class DinoSimulatorStageView extends Stage {
     private final MenuItem compileMenuItem;
     private final MenuItem printEditorMenuItem;
     private final MenuItem quitMenuItem;
-    private final MenuItem saveXMLMenuItem;
-    private final MenuItem saveJAXBMenuItem;
     private final MenuItem serializeMenuItem;
-    private final MenuItem loadXMLMenuItem;
-    private final MenuItem loadJAXBMenuItem;
     private final MenuItem deserializeMenuItem;
     private final MenuItem printTerritoriumMenuItem;
     private final MenuItem changeSizeMenuItem;
+    private final MenuItem loadDBMenuItem;
+    private final MenuItem saveDBMenuItem;
 
     private final CheckMenuItem placeDinoCheckMenuItem;
     private final CheckMenuItem placeBoneCheckMenuItem;
@@ -102,16 +100,12 @@ public class DinoSimulatorStageView extends Stage {
         Menu territoriumMenu = new Menu("_Territorium");
 
         Menu saveMenu = new Menu("_Speichern");
-        saveXMLMenuItem = new MenuItem("XML");
-        saveJAXBMenuItem = new MenuItem("JAXB");
         serializeMenuItem = new MenuItem("Serialisieren");
-        saveMenu.getItems().addAll(saveXMLMenuItem, saveJAXBMenuItem, serializeMenuItem);
+        saveMenu.getItems().addAll(serializeMenuItem);
 
         Menu loadMenu = new Menu("_Laden");
-        loadXMLMenuItem = new MenuItem("XML");
-        loadJAXBMenuItem = new MenuItem("JAXB");
         deserializeMenuItem = new MenuItem("Deserialisieren");
-        loadMenu.getItems().addAll(loadXMLMenuItem, loadJAXBMenuItem, deserializeMenuItem);
+        loadMenu.getItems().addAll(deserializeMenuItem);
 
         Menu savePictureMenu = new Menu("Als _Bild speichern");
 
@@ -158,8 +152,14 @@ public class DinoSimulatorStageView extends Stage {
         stopDinoMenuItem.setGraphic(new ImageView("Stop16.gif"));
         simulationMenu.getItems().addAll(startContinueMenuItem, pauseMenuItem, stopDinoMenuItem);
 
+        // GUI example Menu
+        Menu exampleMenu = new Menu("_Beispiele");
+        saveDBMenuItem = new MenuItem("_Speichern...");
+        loadDBMenuItem = new MenuItem("_Laden...");
+        exampleMenu.getItems().addAll(saveDBMenuItem, loadDBMenuItem);
+
         // adding menus to menubar
-        menuBar.getMenus().addAll(editorMenu, territoriumMenu, dinoMenu, simulationMenu);
+        menuBar.getMenus().addAll(editorMenu, territoriumMenu, dinoMenu, simulationMenu, exampleMenu);
 
         // GUI toolbar
         ToolBar toolBar = new ToolBar();
@@ -307,41 +307,21 @@ public class DinoSimulatorStageView extends Stage {
         return compileMenuItem;
     }
 
-    public MenuItem getPrintEditorMenuItem() {
-        return printEditorMenuItem;
-    }
+    public MenuItem getPrintEditorMenuItem() {return printEditorMenuItem;}
 
     public MenuItem getQuitMenuItem() {
         return quitMenuItem;
-    }
-
-    public MenuItem getSaveXMLMenuItem() {
-        return saveXMLMenuItem;
-    }
-
-    public MenuItem getSaveJAXBMenuItem() {
-        return saveJAXBMenuItem;
     }
 
     public MenuItem getSerializeMenuItem() {
         return serializeMenuItem;
     }
 
-    public MenuItem getLoadXMLMenuItem() {
-        return loadXMLMenuItem;
-    }
-
-    public MenuItem getLoadJAXBMenuItem() {
-        return loadJAXBMenuItem;
-    }
-
     public MenuItem getDeserializeMenuItem() {
         return deserializeMenuItem;
     }
 
-    public MenuItem getPrintTerritoriumMenuItem() {
-        return printTerritoriumMenuItem;
-    }
+    public MenuItem getPrintTerritoriumMenuItem() {return printTerritoriumMenuItem;}
 
     public MenuItem getChangeSizeMenuItem() {
         return changeSizeMenuItem;
@@ -394,6 +374,10 @@ public class DinoSimulatorStageView extends Stage {
     public MenuItem getStopDinoMenuItem() {
         return stopDinoMenuItem;
     }
+
+    public MenuItem getSaveDBMenuItem(){return saveDBMenuItem;}
+
+    public MenuItem getLoadDBMenuItem(){return loadDBMenuItem;}
 
     public Button getNewButton() {
         return newButton;

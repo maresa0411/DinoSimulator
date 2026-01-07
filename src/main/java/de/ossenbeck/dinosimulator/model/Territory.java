@@ -12,7 +12,7 @@ public class Territory {
     private static final int ROCK = -1;
     private static final int EMPTY = 0;
     private static final int MAX_BONES = 9;
-    private List<TerritoryChangeListener> listener;
+    private transient List<TerritoryChangeListener> listener;
 
     public Territory(){
         this(DEFAULT_SIZE, DEFAULT_SIZE);
@@ -285,5 +285,11 @@ public class Territory {
             this.territoryField = newTerritoryField;
         }
         onTerritoryChange();
+    }
+
+    public synchronized void replaceTerritory(Territory newTerritory) {
+        this.territoryField = newTerritory.getTerritoryField();
+        this.dino = newTerritory.getDino();
+        this.dino.setTerritory(this);
     }
 }
