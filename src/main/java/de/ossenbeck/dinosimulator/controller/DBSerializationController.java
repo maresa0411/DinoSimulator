@@ -173,8 +173,7 @@ public class DBSerializationController {
 
         try {
             Class.forName(DRIVER);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException _) {
             return false;
         }
 
@@ -191,8 +190,7 @@ public class DBSerializationController {
             if (!resultSet3.next()) {
                 createAndInitTable(conn, CREATE_TAG_EXAMPLE_TABLE_STATEMENT);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException _) {
             return false;
         }
         return true;
@@ -260,8 +258,7 @@ public class DBSerializationController {
             while(resultSet.next()){
                 examples.add(resultSet.getString("id") + "-" + resultSet.getString("name"));
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception _) {
             Alert alert = new Alert(AlertType.ERROR, "Sorry,     Datenbankfehler beim Lesen!", ButtonType.OK);
             alert.showAndWait();
         }
@@ -351,9 +348,8 @@ public class DBSerializationController {
                 counter++;
                 conn.commit();
             }
-        } catch (SQLException e) {
+        } catch (SQLException _) {
             try {
-                e.printStackTrace();
                 Alert alert = new Alert(AlertType.ERROR, "Sorry, Datenbankfehler beim Speichern!", ButtonType.OK);
                 alert.showAndWait();
                 conn.rollback();
