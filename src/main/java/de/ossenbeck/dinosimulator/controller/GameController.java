@@ -88,6 +88,7 @@ public class GameController {
         new DinoChangeControlller(territory, stageView, notifier);
         new StageController(stageView, simulationController);
         new DBSerializationController(territory, stageView, simulationController);
+        new LanguageController(stageView);
         OPENED_PROGRAMS.put(title, new Program(stageView));
         Platform.runLater(() -> {
             stageView.setTitle(title);

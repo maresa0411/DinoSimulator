@@ -259,7 +259,7 @@ public class DBSerializationController {
                 examples.add(resultSet.getString("id") + "-" + resultSet.getString("name"));
             }
         } catch (Exception _) {
-            Alert alert = new Alert(AlertType.ERROR, "Sorry,     Datenbankfehler beim Lesen!", ButtonType.OK);
+            Alert alert = new Alert(AlertType.ERROR, "Sorry, Datenbankfehler beim Lesen!", ButtonType.OK);
             alert.showAndWait();
         }
         return examples;
@@ -287,6 +287,9 @@ public class DBSerializationController {
                 territory.getDino().setAmountOfBones(resultSet.getInt("amountOfBones"));
                 territory.getDino().setOrientation(intToOrientation(resultSet.getInt("orientation")));
                 territory.getDino().setPosition(resultSet.getInt("dinoRow"), resultSet.getInt("dinoCol"));
+            }else{
+                Alert alert = new Alert(AlertType.ERROR, "Sorry, Datenbankfehler beim Lesen!", ButtonType.OK);
+                alert.showAndWait();
             }
         } catch (Exception _) {
             Alert alert = new Alert(AlertType.ERROR, "Sorry, Datenbankfehler beim Lesen!", ButtonType.OK);

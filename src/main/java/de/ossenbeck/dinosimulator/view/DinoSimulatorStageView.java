@@ -1,5 +1,6 @@
 package de.ossenbeck.dinosimulator.view;
 
+import de.ossenbeck.dinosimulator.controller.ResourcesController;
 import de.ossenbeck.dinosimulator.util.Notifier;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -40,6 +41,11 @@ public class DinoSimulatorStageView extends Stage {
     private final MenuItem pauseMenuItem;
     private final MenuItem stopDinoMenuItem;
 
+    private final Menu languageMenu;
+    private final ToggleGroup languageGroup;
+    private final RadioMenuItem languageEnglishMenuItem;
+    private final RadioMenuItem languageGermanMenuItem;
+
     private final Button newButton;
     private final Button loadButton;
     private final Button saveButton;
@@ -70,7 +76,8 @@ public class DinoSimulatorStageView extends Stage {
         MenuBar menuBar = new MenuBar();
 
         // GUI editor menu
-        Menu editorMenu = new Menu("_Editor");
+        Menu editorMenu = new Menu();
+        editorMenu.textProperty().bind(ResourcesController.getResourcesController().i18n("editorMenu"));
 
         newMenuItem = new MenuItem("_Neu");
         newMenuItem.setAccelerator(KeyCombination.keyCombination("SHORTCUT+N"));
@@ -97,7 +104,8 @@ public class DinoSimulatorStageView extends Stage {
         editorMenu.getItems().addAll(newMenuItem, openMenuItem, separatorMenuItem1,compileMenuItem, printEditorMenuItem, separatorMenuItem2, quitMenuItem);
 
         // GUI territorium menu
-        Menu territoriumMenu = new Menu("_Territorium");
+        Menu territoriumMenu = new Menu();
+        territoriumMenu.textProperty().bind(ResourcesController.getResourcesController().i18n("territoriumMenu"));
 
         Menu saveMenu = new Menu("_Speichern");
         serializeMenuItem = new MenuItem("Serialisieren");
@@ -122,7 +130,8 @@ public class DinoSimulatorStageView extends Stage {
         territoriumMenu.getItems().addAll(saveMenu, loadMenu, savePictureMenu, printTerritoriumMenuItem, changeSizeMenuItem, separatorMenuItem3, placeDinoCheckMenuItem, placeBoneCheckMenuItem, placeRockCheckMenuItem, deleteCheckMenuItem);
 
         // GUI dino menu
-        Menu dinoMenu = new Menu("_Dino");
+        Menu dinoMenu = new Menu();
+        dinoMenu.textProperty().bind(ResourcesController.getResourcesController().i18n("dinoMenu"));
 
         adjustAmountOfBonesMenuItem = new MenuItem("_Knochenmenge anpassen");
 
@@ -141,7 +150,8 @@ public class DinoSimulatorStageView extends Stage {
         dinoMenu.getItems().addAll(adjustAmountOfBonesMenuItem, turnLeftMenuItem, forwardMenuItem, pickUpBoneMenuItem, putDownBoneMenuItem);
 
         // GUI simulation menu
-        Menu simulationMenu = new Menu("_Simulation");
+        Menu simulationMenu = new Menu();
+        simulationMenu.textProperty().bind(ResourcesController.getResourcesController().i18n("simulationMenu"));
         startContinueMenuItem = new MenuItem("Start/_Fortsetzen");
         startContinueMenuItem.setAccelerator(KeyCombination.keyCombination("SHORTCUT+F11"));
         startContinueMenuItem.setGraphic(new ImageView("Start16.gif"));
@@ -153,13 +163,33 @@ public class DinoSimulatorStageView extends Stage {
         simulationMenu.getItems().addAll(startContinueMenuItem, pauseMenuItem, stopDinoMenuItem);
 
         // GUI example Menu
-        Menu exampleMenu = new Menu("_Beispiele");
+        Menu exampleMenu = new Menu();
+        exampleMenu.textProperty().bind(ResourcesController.getResourcesController().i18n("exampleMenu"));
         saveDBMenuItem = new MenuItem("_Speichern...");
         loadDBMenuItem = new MenuItem("_Laden...");
         exampleMenu.getItems().addAll(saveDBMenuItem, loadDBMenuItem);
 
+        // GUI language Menu
+        languageMenu = new Menu();
+        languageMenu.textProperty().bind(ResourcesController.getResourcesController().i18n("languageMenu"));
+        languageGroup = new ToggleGroup();
+
+        languageEnglishMenuItem = new RadioMenuItem();
+        languageEnglishMenuItem.textProperty().bind(ResourcesController.getResourcesController().i18n("languageEnglishMenuItem"));
+        languageEnglishMenuItem.setToggleGroup(languageGroup);
+        languageEnglishMenuItem
+                .setSelected(ResourcesController.getResourcesController().getLocale().getLanguage().equals("en"));
+
+        languageGermanMenuItem = new RadioMenuItem();
+        languageGermanMenuItem.textProperty().bind(ResourcesController.getResourcesController().i18n("languageGermanMenuItem"));
+        languageGermanMenuItem.setToggleGroup(languageGroup);
+        languageGermanMenuItem
+                .setSelected(ResourcesController.getResourcesController().getLocale().getLanguage().equals("de"));
+
+        languageMenu.getItems().addAll(languageEnglishMenuItem, languageGermanMenuItem);
+
         // adding menus to menubar
-        menuBar.getMenus().addAll(editorMenu, territoriumMenu, dinoMenu, simulationMenu, exampleMenu);
+        menuBar.getMenus().addAll(editorMenu, territoriumMenu, dinoMenu, simulationMenu, exampleMenu,languageMenu);
 
         // GUI toolbar
         ToolBar toolBar = new ToolBar();
@@ -289,7 +319,6 @@ public class DinoSimulatorStageView extends Stage {
         VBox.setVgrow(splitPane, Priority.ALWAYS);
         root.getChildren().addAll(menuBar, toolBar, splitPane, notifier);
 
-        setTitle("Dino Simulator");
         setScene(new Scene(root, 800, 500));
     }
 
@@ -456,4 +485,10 @@ public class DinoSimulatorStageView extends Stage {
     public Notifier getNotifier(){
         return notifier;
     }
+
+    public ToggleGroup getLanguageGroup(){return languageGroup;}
+
+    public MenuItem getLanguageEnglishMenuItem(){return languageEnglishMenuItem;}
+
+    public MenuItem getLanguageGermanMenuItem(){return languageGermanMenuItem;}
 }
