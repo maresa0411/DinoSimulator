@@ -288,7 +288,7 @@ public class DBSerializationController {
                 territory.getDino().setOrientation(intToOrientation(resultSet.getInt("orientation")));
                 territory.getDino().setPosition(resultSet.getInt("dinoRow"), resultSet.getInt("dinoCol"));
             }else{
-                Alert alert = new Alert(AlertType.ERROR, "Sorry, Datenbankfehler beim Lesen!", ButtonType.OK);
+                Alert alert = new Alert(AlertType.ERROR, "Das Beispiel existiert leider nicht mehr!", ButtonType.OK);
                 alert.showAndWait();
             }
         } catch (Exception _) {
@@ -311,9 +311,8 @@ public class DBSerializationController {
             alert.showAndWait();
             return;
         }
-
         try (PreparedStatement insertExampleStmt = conn.prepareStatement(INSERT_EXAMPLE_STATEMENT, Statement.RETURN_GENERATED_KEYS)) {
-
+            conn.setAutoCommit(false);
             for(String tag: tags){
                 try(PreparedStatement selectTagStmt = conn.prepareStatement(SELECT_TAG_EXISTS_STATEMENT)) {
                     selectTagStmt.setString(1, tag);
@@ -328,7 +327,6 @@ public class DBSerializationController {
                 }
             }
             synchronized (territory) {
-                conn.setAutoCommit(false);
                 insertExampleStmt.setInt(1, counter);
                 insertExampleStmt.setString(2, name);
                 insertExampleStmt.setString(3, code);
@@ -349,8 +347,8 @@ public class DBSerializationController {
                     }
                 }
                 counter++;
-                conn.commit();
             }
+            conn.commit();
         } catch (SQLException _) {
             try {
                 Alert alert = new Alert(AlertType.ERROR, "Sorry, Datenbankfehler beim Speichern!", ButtonType.OK);
