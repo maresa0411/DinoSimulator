@@ -37,10 +37,9 @@ public class GameController {
     }
 
     /**
-     * opens default game with {@code DEFAULT_NAME}
+     * Opens default game with {@code DEFAULT_NAME}.
      */
     public static void openDefault(){
-
         if(!isOpened(DEFAULT_NAME)){
             String code = SaveLoadController.readFile(DEFAULT_DINO_FILE);
 
@@ -88,7 +87,7 @@ public class GameController {
         new DinoChangeControlller(territory, stageView, notifier);
         new StageController(stageView, simulationController);
         new DBSerializationController(territory, stageView, simulationController);
-        new LanguageController(stageView);
+        new LanguageController(stageView, notifier);
         OPENED_PROGRAMS.put(title, new Program(stageView));
         Platform.runLater(() -> {
             stageView.setTitle(title);

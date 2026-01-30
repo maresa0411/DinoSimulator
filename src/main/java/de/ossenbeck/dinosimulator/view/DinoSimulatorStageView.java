@@ -17,11 +17,9 @@ public class DinoSimulatorStageView extends Stage {
     private final MenuItem newMenuItem;
     private final MenuItem openMenuItem;
     private final MenuItem compileMenuItem;
-    private final MenuItem printEditorMenuItem;
     private final MenuItem quitMenuItem;
     private final MenuItem serializeMenuItem;
     private final MenuItem deserializeMenuItem;
-    private final MenuItem printTerritoriumMenuItem;
     private final MenuItem changeSizeMenuItem;
     private final MenuItem loadDBMenuItem;
     private final MenuItem saveDBMenuItem;
@@ -41,7 +39,6 @@ public class DinoSimulatorStageView extends Stage {
     private final MenuItem pauseMenuItem;
     private final MenuItem stopDinoMenuItem;
 
-    private final Menu languageMenu;
     private final ToggleGroup languageGroup;
     private final RadioMenuItem languageEnglishMenuItem;
     private final RadioMenuItem languageGermanMenuItem;
@@ -92,16 +89,12 @@ public class DinoSimulatorStageView extends Stage {
         compileMenuItem = new MenuItem("_Kompilieren");
         compileMenuItem.setAccelerator(KeyCombination.keyCombination("SHORTCUT+K"));
 
-        printEditorMenuItem = new MenuItem("_Drucken");
-        printEditorMenuItem.setAccelerator(KeyCombination.keyCombination("SHORTCUT+P"));
-        printEditorMenuItem.setGraphic(new ImageView("Print16.gif"));
-
         SeparatorMenuItem separatorMenuItem2 = new SeparatorMenuItem();
 
         quitMenuItem = new MenuItem("_Beenden");
         quitMenuItem.setAccelerator(KeyCombination.keyCombination("SHORTCUT+Q"));
 
-        editorMenu.getItems().addAll(newMenuItem, openMenuItem, separatorMenuItem1,compileMenuItem, printEditorMenuItem, separatorMenuItem2, quitMenuItem);
+        editorMenu.getItems().addAll(newMenuItem, openMenuItem, separatorMenuItem1,compileMenuItem, separatorMenuItem2, quitMenuItem);
 
         // GUI territorium menu
         Menu territoriumMenu = new Menu();
@@ -115,9 +108,6 @@ public class DinoSimulatorStageView extends Stage {
         deserializeMenuItem = new MenuItem("Deserialisieren");
         loadMenu.getItems().addAll(deserializeMenuItem);
 
-        Menu savePictureMenu = new Menu("Als _Bild speichern");
-
-        printTerritoriumMenuItem = new MenuItem("_Drucken");
         changeSizeMenuItem = new MenuItem("_Größe ändern");
 
         SeparatorMenuItem separatorMenuItem3 = new SeparatorMenuItem();
@@ -127,7 +117,7 @@ public class DinoSimulatorStageView extends Stage {
         placeRockCheckMenuItem = new CheckMenuItem("_Felsen platzieren");
         deleteCheckMenuItem = new CheckMenuItem("_Kachel löschen");
 
-        territoriumMenu.getItems().addAll(saveMenu, loadMenu, savePictureMenu, printTerritoriumMenuItem, changeSizeMenuItem, separatorMenuItem3, placeDinoCheckMenuItem, placeBoneCheckMenuItem, placeRockCheckMenuItem, deleteCheckMenuItem);
+        territoriumMenu.getItems().addAll(saveMenu, loadMenu, changeSizeMenuItem, separatorMenuItem3, placeDinoCheckMenuItem, placeBoneCheckMenuItem, placeRockCheckMenuItem, deleteCheckMenuItem);
 
         // GUI dino menu
         Menu dinoMenu = new Menu();
@@ -170,7 +160,7 @@ public class DinoSimulatorStageView extends Stage {
         exampleMenu.getItems().addAll(saveDBMenuItem, loadDBMenuItem);
 
         // GUI language Menu
-        languageMenu = new Menu();
+        Menu languageMenu = new Menu();
         languageMenu.textProperty().bind(ResourcesController.getResourcesController().i18n("languageMenu"));
         languageGroup = new ToggleGroup();
 
@@ -189,7 +179,7 @@ public class DinoSimulatorStageView extends Stage {
         languageMenu.getItems().addAll(languageEnglishMenuItem, languageGermanMenuItem);
 
         // adding menus to menubar
-        menuBar.getMenus().addAll(editorMenu, territoriumMenu, dinoMenu, simulationMenu, exampleMenu,languageMenu);
+        menuBar.getMenus().addAll(editorMenu, territoriumMenu, dinoMenu, simulationMenu, exampleMenu, languageMenu);
 
         // GUI toolbar
         ToolBar toolBar = new ToolBar();
@@ -322,8 +312,6 @@ public class DinoSimulatorStageView extends Stage {
         setScene(new Scene(root, 800, 500));
     }
 
-    // The unused getters will be used later to implement the action
-
     public MenuItem getNewMenuItem() {
         return newMenuItem;
     }
@@ -336,8 +324,6 @@ public class DinoSimulatorStageView extends Stage {
         return compileMenuItem;
     }
 
-    public MenuItem getPrintEditorMenuItem() {return printEditorMenuItem;}
-
     public MenuItem getQuitMenuItem() {
         return quitMenuItem;
     }
@@ -349,8 +335,6 @@ public class DinoSimulatorStageView extends Stage {
     public MenuItem getDeserializeMenuItem() {
         return deserializeMenuItem;
     }
-
-    public MenuItem getPrintTerritoriumMenuItem() {return printTerritoriumMenuItem;}
 
     public MenuItem getChangeSizeMenuItem() {
         return changeSizeMenuItem;

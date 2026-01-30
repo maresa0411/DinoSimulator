@@ -245,6 +245,10 @@ public class Territory {
         this.listener.add(listener);
     }
 
+    /**
+     * Transfers the territory change listeners from the current to the new territory.
+     * @param newTerritory the new territory the listeners will be transferred to
+     */
     public void transferTerritoryChangeListener(Territory newTerritory){
         for(TerritoryChangeListener l:listener){
             newTerritory.addListener(l);
@@ -253,6 +257,9 @@ public class Territory {
         newTerritory.onTerritoryChange();
     }
 
+    /**
+     * Called to notify all territory change listeners about a change of the territory.
+     */
     public void onTerritoryChange(){
         for(TerritoryChangeListener l:listener){
             l.onTerritoryChanged();
@@ -263,6 +270,10 @@ public class Territory {
         return MAX_BONES;
     }
 
+    /**
+     * Replaces the current dino with the new Dino and transfers all attributes.
+     * @param newDino the new dino
+     */
     public synchronized void replaceDino(Dino newDino){
         if(newDino == null){
             newDino = new Dino();
@@ -278,6 +289,10 @@ public class Territory {
         listener.remove(l);
     }
 
+    /**
+     * Returns the data structure the territory is saved as.
+     * @return a two-dimensional int array
+     */
     public synchronized int[][] getTerritoryField(){return territoryField;}
 
     public void setTerritoryField(int[][] newTerritoryField){
@@ -287,6 +302,10 @@ public class Territory {
         onTerritoryChange();
     }
 
+    /**
+     * Replaces the current values of the territory with the values of the new territory.
+     * @param newTerritory the new territory
+     */
     public synchronized void replaceTerritory(Territory newTerritory) {
         this.territoryField = newTerritory.getTerritoryField();
         this.dino = newTerritory.getDino();

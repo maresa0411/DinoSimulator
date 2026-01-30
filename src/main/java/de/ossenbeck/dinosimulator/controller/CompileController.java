@@ -11,8 +11,6 @@ import javax.tools.ToolProvider;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -60,26 +58,9 @@ public class CompileController {
     private Dino loadClass(String filename) {
         try (URLClassLoader classLoader = new URLClassLoader(new URL[] { new File(SaveLoadController.PROGRAMS_PATH).toURI().toURL() })) {
             return (Dino) classLoader.loadClass(filename).getConstructor().newInstance();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (IOException | ReflectiveOperationException | SecurityException _) { // Generated with ChatGPT at 30.01.2026
+            return null;
         }
-        return null;
     }
 
 
@@ -94,12 +75,12 @@ public class CompileController {
         simulationController.stopSimulation();
         SaveLoadController.save(stage.getTextArea().getText(), stage.getTitle());
         String err = compile(stage.getTitle());
+        Alert alert;
         if(err != null){
-            Alert alert = new Alert(Alert.AlertType.ERROR, err, ButtonType.OK);
-            alert.showAndWait();
+            alert = new Alert(Alert.AlertType.ERROR, err, ButtonType.OK);
         }else{
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Kompilierung erfolgreich!", ButtonType.OK);
-            alert.showAndWait();
+            alert = new Alert(Alert.AlertType.INFORMATION, "Kompilierung erfolgreich!", ButtonType.OK);
         }
+        alert.showAndWait();
     }
 }

@@ -10,7 +10,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
-
 public class DinoSimulatorPaneView extends StackPane implements TerritoryChangeListener, DinoDragListener {
     private static final int BORDER_SIZE = 50;
     private static final int SIZE = 50;

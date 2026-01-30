@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DinoContextMenu extends ContextMenu {
-
     public DinoContextMenu(final Territory territory){
         List<Method> methods = getMethods(territory.getDino());
         for(Method method : methods){
@@ -32,19 +31,7 @@ public class DinoContextMenu extends ContextMenu {
                 menuItem.setDisable(true);
             }
             this.getItems().add(menuItem);
-            menuItem.setOnAction(_ -> {
-                try {
-                    method.invoke(territory.getDino());
-                } catch (IllegalAccessException  _) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler", ButtonType.OK);
-                    alert.showAndWait();
-                } catch(InvocationTargetException e){
-                    String message = (e.getCause().getMessage() != null)? e.getCause().getMessage(): "Fehler";
-                    Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
-                    alert.showAndWait();
-                }
-            });
-
+            menuItem.setOnAction(_ -> menuItemAction(method, territory));
         }
     }
 
@@ -65,5 +52,18 @@ public class DinoContextMenu extends ContextMenu {
 
         }
         return methods;
+    }
+
+    private void menuItemAction(Method method, Territory territory){
+        try {
+            method.invoke(territory.getDino());
+        } catch (IllegalAccessException  _) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Fehler", ButtonType.OK);
+            alert.showAndWait();
+        } catch(InvocationTargetException e){
+            String message = (e.getCause().getMessage() != null)? e.getCause().getMessage(): "Fehler";
+            Alert alert = new Alert(Alert.AlertType.ERROR, message, ButtonType.OK);
+            alert.showAndWait();
+        }
     }
 }

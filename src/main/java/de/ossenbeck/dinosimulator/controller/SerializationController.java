@@ -16,7 +16,7 @@ import javafx.stage.FileChooser;
 
 public class SerializationController {
 
-    private static FileChooser fileChooser = null;
+    private static final FileChooser fileChooser;
 
     static {
         fileChooser = new FileChooser();
@@ -50,8 +50,7 @@ public class SerializationController {
                 os.writeInt(territory.getDino().getAmountOfBones());
                 os.writeObject(territory.getDino().getOrientation());
             }
-        } catch (Exception exc) {
-            exc.printStackTrace();
+        } catch (Exception _) {
             Alert alert = new Alert(AlertType.ERROR, "Fehler beim Speichern!", ButtonType.OK);
             alert.showAndWait();
         }
@@ -67,8 +66,8 @@ public class SerializationController {
                 territory.getDino().setPosition(is.readInt(), is.readInt());
                 territory.getDino().setAmountOfBones(is.readInt());
                 territory.getDino().setOrientation((Orientation) is.readObject());
-            } catch (Exception exc) {
-                exc.printStackTrace();
+                territory.onTerritoryChange();
+            } catch (Exception _) {
                 Alert alert = new Alert(AlertType.ERROR, "Ungültige Datei!", ButtonType.OK);
                 alert.showAndWait();
             }

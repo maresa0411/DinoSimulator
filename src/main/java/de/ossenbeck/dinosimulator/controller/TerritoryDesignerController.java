@@ -243,8 +243,4 @@ public class TerritoryDesignerController {
             l.onDinoDrag();
         }
     }
-
-    public void addDinoDragListener(DinoDragListener l){
-        listener.add(l);
-    }
 }

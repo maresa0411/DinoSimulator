@@ -2,6 +2,7 @@ package de.ossenbeck.dinosimulator.controller;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 public class PropertiesController {
@@ -18,9 +19,9 @@ public class PropertiesController {
     }
 
     private static final String PROP_LANGUAGE = "language";
-    private static final String DEF_LANGUAGE = null;
+    private static final String DEF_LANGUAGE = Locale.getDefault().getLanguage();
 
-    private Properties prop = new Properties();
+    private Properties prop;
 
     private PropertiesController() {
         this.prop = new Properties();
@@ -32,8 +33,17 @@ public class PropertiesController {
     }
 
     public String getLanguage() {
-        String lang = this.prop.getProperty(PropertiesController.PROP_LANGUAGE);
-        return lang == null ? DEF_LANGUAGE : lang;
+        final String lang = prop.getProperty(PROP_LANGUAGE);
+        return lang == null || !isValidLocale(lang) ? DEF_LANGUAGE : lang;
     }
 
+    public static boolean isValidLocale(String input) {
+        Locale locale = Locale.forLanguageTag(input);
+        for (Locale available : Locale.getAvailableLocales()) {
+            if (available.getLanguage().equals(locale.getLanguage())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
