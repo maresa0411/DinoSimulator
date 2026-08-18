@@ -16,7 +16,7 @@ isMouthEmpty()      , um zu prüfen, ob der Dino mindestens einen Knochen im Mau
 
 Folgende Technologien wurden bei der Umsetzung des Projektes eingesetzt: JavaFX-Anwendung mit MVC-Struktur, OOP, Event-basierte Kommunikation, Compiler/Classloader, Reflection, parallele Programmierung (Threads), Serialisierung, JDBC, Java-Properties und -RessourceBundles
 
-Der DinoSimulator kann über die enthaltene .jar ausgeführt werden.
+Der DinoSimulator kann über die unter Releases bereitgestellte .jar ausgeführt werden.
 
 Bekannte Fehler und Informationen:
 Die Übersetzung auf Englisch ist nicht vollständig umgesetzt.
