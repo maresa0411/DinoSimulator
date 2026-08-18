@@ -3,7 +3,7 @@ Das Spielfeld lässt sich gestalten, indem Felsen als Hindernis und Knochen zum 
 Der Dino kann nach vorne bewegt werden, links drehen, einen Knochen aufheben und ablegen und die Knochenmenge im Maul anpassen.
 Im Textfeld links kann Java-Code zur Bewegung des Dinos mithilfe der unten beschriebenen Basisfunktionen geschrieben werden. Nach erfolgreicher Kompilierung kann dieser Code durch die Simulation ausgeführt werden.
 Ein Territorium kann per Serialisierung gespeichert und geladen werden. Außerdem können Beispiele unter Tags in einer Datenbank abgespeichert und aus dieser geladen werden. Java-Code kann auch gespeichert und geladen werden.
-Zudem kann die Sprache zwischen Deutsch und Englisch angepasst werden (die englische Übersetzung ist aber nicht vollständig umgesetzt).
+Zudem kann die Sprache zwischen Deutsch und Englisch über das Menü oder vor Start in den properties angepasst werden (die englische Übersetzung ist aber nicht vollständig umgesetzt).
 
 Der Dino im DinoSimulator kann mit folgenden Methoden gesteuert werden:
 moveForward()       , um eine Kachel vorwärts zu gehen.
